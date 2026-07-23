@@ -5,9 +5,8 @@ import { getMe } from '@/lib/actions/me'
 export default async function DashboardUserProfilePage() {
   // Me
   const resMe = await getMe()
-  const me = resMe.success ? resMe.payload : null
-
-  !me && redirect('/')
+  if (!resMe.success || !resMe.payload) redirect('/')
+  const me = resMe.payload
 
   return (
     <section className="main flex flex-col">

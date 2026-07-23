@@ -14,10 +14,8 @@ async function main() {
       name: 'Admin User',
       email: defaultEmail,
       password: passwordHash,
-      role: 'SUPERADMIN', // from your Role enum
+      role: 'SUPERADMIN',
       activatedAt: new Date(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
     },
   })
 

@@ -1,8 +1,5 @@
-import "next-auth"
-import { DefaultJWT } from "next-auth/jwt"
+import type { User as PrismaUser } from '@prisma/client'
 
 declare global {
-
-  type User = import('@prisma/user').User
-
+  type User = PrismaUser
 }

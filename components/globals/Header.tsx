@@ -1,3 +1,4 @@
+import { connection } from 'next/server'
 import Link from 'next/link'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
@@ -6,6 +7,7 @@ import DrawerProfile from '@/components/globals/DrawerProfile'
 import ButtonDrawer from '@/components/ui/ButtonDrawer'
 
 export default async function Header() {
+  await connection()
   const session = await getServerSession(authOptions)
 
   return (
@@ -25,11 +27,11 @@ export default async function Header() {
               <DrawerProfile />
             ) : (
               <div className="flex items-center gap-3">
-                <Link href="/signup" className="button button--accent">
-                  Sign In
-                </Link>
                 <Link href="/login" className="button button--secondary">
                   Login
+                </Link>
+                <Link href="/signup" className="button button--accent">
+                  Sign Up
                 </Link>
               </div>
             )}

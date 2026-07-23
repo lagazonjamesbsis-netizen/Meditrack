@@ -12,7 +12,12 @@ export default function FormSignup({ className }: { className?: string }) {
   const formRef = useRef<HTMLFormElement>(null)
 
   // States
-  const [state, handleSubmit, pending] = useActionState(signupUser, {})
+  const [state, handleSubmit, pending] = useActionState(signupUser, {
+    success: false,
+    message: null,
+    errors: null,
+    input: { name: '', email: '' },
+  })
 
   useEffect(() => {
     if (state?.success && formRef.current) {

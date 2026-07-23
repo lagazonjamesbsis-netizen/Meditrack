@@ -33,7 +33,7 @@ export default async function DashboardUsersPage({
       </div>
       <div className="main__content py-3 px-5">
         <UsersTable
-          users={(res.payload ?? []) as any[]}
+          users={res.payload ?? []}
           page={page}
           totalPages={res.totalPages ?? 1}
           total={res.total ?? 0}

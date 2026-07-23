@@ -116,7 +116,7 @@ export async function createUser(_prevState: any, formData: FormData) {
 // Shared insert path for signup + admin create.
 async function persistNewUser(data: { name: string; email: string; password: string; role: string }) {
   try {
-    const userExist = await prisma[table].findFirst({ where: { email: data.email } })
+    const userExist = await prisma[table].findFirst({ where: { email: data.email, deletedAt: null } })
     if (userExist) {
       return {
         success: false,

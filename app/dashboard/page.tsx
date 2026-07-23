@@ -8,8 +8,11 @@ export const metadata: Metadata = {
   description: 'User',
 }
 
+import { redirect } from 'next/navigation'
+
 export default async function Dashboard() {
   const session = await getServerSession(authOptions)
+  if (!session?.user?.id) redirect('/login')
   const res = await getUser(session.user.id)
   const user = res.payload
 

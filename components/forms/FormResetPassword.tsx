@@ -70,7 +70,7 @@ export default function FormResetPassword({
         <input
           required
           className={`${
-            !state?.success && state?.errors?.includes('email')
+            !state?.success && state?.errors?.email
               ? 'has-errors'
               : 'border-gray-400 text-gray-400'
           } auth-input w-full`}
@@ -116,7 +116,7 @@ export default function FormResetPassword({
         <input
           required
           className={`${
-            !state?.success && state?.errors?.confirmpassword
+            !state?.success && state?.errors?.confirmPassword
               ? 'has-errors'
               : 'border-black'
           } auth-input w-full`}
@@ -125,10 +125,10 @@ export default function FormResetPassword({
           placeholder="********"
         />
         {/* Field Alert */}
-        {state?.errors?.confirmpassword && (
+        {state?.errors?.confirmPassword && (
           <div className="error text-red-500 text-[12px] font-semibold">
             {' '}
-            {state?.errors?.confirmpassword}{' '}
+            {state?.errors?.confirmPassword}{' '}
           </div>
         )}
       </div>

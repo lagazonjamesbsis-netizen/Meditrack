@@ -39,8 +39,8 @@ export default function Drawer() {
               <Link href="/">{SCHOOL_NAME}</Link>
             </h1>
 
-            <button className="button button--circle">
-              <X onClick={toggle} />
+            <button className="button button--circle" onClick={toggle}>
+              <X />
             </button>
           </div>
         </div>

@@ -33,7 +33,7 @@ export default function FormProfile({
   //
   useEffect(() => {
     setMe(m)
-  }, [])
+  }, [m])
 
   //
   useEffect(() => {
@@ -76,7 +76,7 @@ export default function FormProfile({
         }))
         //
         const update = await updateMe(
-          formRef.current,
+          { payload: null, message: null, success: false },
           (() => {
             const fd = new FormData()
             fd.append('name', me.name)
@@ -108,7 +108,7 @@ export default function FormProfile({
     try {
       // Delete the blob first: deleteMedia verifies the URL is still the
       // user's stored image, so it must run before updateMe nulls it.
-      const deleted = await deleteMedia(formRef.current, formData)
+      const deleted = await deleteMedia(null, formData)
 
       if (deleted.success) {
         const updated = await updateMe(formRef.current, formData)
@@ -217,7 +217,7 @@ export default function FormProfile({
               name="email"
               type="email"
               defaultValue={me?.email}
-              className={`!w-full ${state.errors?.name ? 'has-errors' : ''}`}
+              className={`!w-full ${state.errors?.email ? 'has-errors' : ''}`}
             />
           </div>
           {state?.message && (
