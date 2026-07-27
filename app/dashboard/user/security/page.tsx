@@ -1,4 +1,3 @@
-import FormProfile from '@/components/forms/FormProfile'
 import { redirect } from 'next/navigation'
 import { getMe } from '@/lib/actions/me'
 import FormSecurity from '@/components/forms/FormSecurity'
@@ -13,7 +12,7 @@ export default async function DashboardUserSecurityPage() {
   return (
     <section className="main flex flex-col">
       {/** Top */}
-      <div className="main__header font-semibold py-3 px-5 border-b bg-gray-100 border-gray-100">
+      <div className="main__header font-semibold py-3 px-5 border-b bg-gray-100 dark:bg-gray-800 border-gray-100 dark:border-gray-700">
         Security
       </div>
 

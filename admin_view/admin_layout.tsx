@@ -1,33 +1,35 @@
+// File location: admin_view/admin_layout.tsx
 "use client";
 
 import {
   Activity,
-  Bell,
   CalendarCheck,
   ClipboardList,
   HeartPulse,
   LayoutDashboard,
   Plus,
-  UserRound,
   Users,
 } from "lucide-react";
-import { type ReactNode, useState } from "react";
+import { type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useDarkMode } from "@/app/meditrack/DarkModeContext";
+import AdminTopBar from "@/app/admin/AdminTopBar";
+import { CurrentUserProvider } from "@/app/admin/CurrentUserContext";
+import { AdminDataProvider } from "@/app/admin/AdminDataContext";
 
 const navItems = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/admin" },
   { label: "Analytics", icon: Activity, href: "/admin/analytics" },
   { label: "User management", icon: Users, href: "/admin/users" },
-  { label: "Appointment requests", icon: CalendarCheck, href: "/admin/requests" },
+  { label: "Approval requests", icon: CalendarCheck, href: "/admin/requests" },
   { label: "Events & services", icon: HeartPulse, href: "/admin/events" },
   { label: "Appointment schedule", icon: ClipboardList, href: "/admin/appointments" },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { darkMode, setDarkMode } = useDarkMode();
+  const { darkMode } = useDarkMode();
 
   return (
     <div className={`flex min-h-screen ${darkMode ? "bg-gradient-to-b from-[#050617] to-[#050617]" : "bg-gradient-to-b from-violet-300 to-white"}`}>
@@ -79,25 +81,21 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           })}
         </nav>
 
-        <div className={`border-t pt-3 mt-auto ${darkMode ? "border-gray-700" : "border-gray-200"}`}>
-          <div className={`flex items-center justify-between px-4 py-3 rounded-[10px] transition-colors cursor-pointer ${darkMode ? "hover:bg-[#050617]/50" : "hover:bg-[#E8E8E8]/50"}`}>
-            <div className="flex items-center gap-3.5">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`w-5 h-5 ${darkMode ? "text-[#F9FAFB]" : "text-gray-500"}`}>
-                <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
-              </svg>
-              <span className={`font-poppins text-sm font-semibold ${darkMode ? "text-gray-200" : "text-[#2A2E43]"}`}>Dark Mode</span>
-            </div>
-            <label className="relative inline-block w-[38px] h-5 cursor-pointer">
-              <input type="checkbox" className="opacity-0 w-0 h-0 peer" checked={darkMode} onChange={() => setDarkMode(!darkMode)} />
-              <span className="absolute inset-0 bg-gray-300 rounded-full transition-colors peer-checked:bg-[#4E69D3] after:content-[''] after:absolute after:h-4 after:w-4 after:left-[2px] after:bottom-[2px] after:bg-white after:rounded-full after:transition-transform peer-checked:after:translate-x-[18px]" />
-            </label>
-          </div>
-        </div>
+        {/*
+          The Dark Mode toggle that used to live here has moved into the
+          account dropdown (AdminTopBar) so there's a single source of truth
+          instead of two toggles that could get out of sync.
+        */}
       </aside>
 
-      <main className="flex-1 ml-[400px] flex flex-col">
-        {children}
-      </main>
+      <CurrentUserProvider>
+        <AdminDataProvider>
+          <main className="flex-1 ml-[400px] flex flex-col">
+            <AdminTopBar />
+            {children}
+          </main>
+        </AdminDataProvider>
+      </CurrentUserProvider>
     </div>
   );
 }

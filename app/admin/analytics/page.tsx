@@ -1,7 +1,5 @@
-"use client";
+import AdminAnalytics from "@/admin_view/admin_analytics";
 
-import AdminAnalytics from "../../../admin_view/admin_analytics";
-
-export default function AnalyticsPage() {
+export default function Page() {
   return <AdminAnalytics />;
 }

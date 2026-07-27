@@ -2,6 +2,8 @@
 
 @import '../styles/utilities.css';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -9,6 +11,15 @@
   --secondary: #e5e7eb;
   --tertiary: #d1d5db;
   --accent: #000000;
+}
+
+.dark {
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+  --primary: #1e293b;
+  --secondary: #334155;
+  --tertiary: #475569;
+  --accent: #ffffff;
 }
 
 @theme inline {

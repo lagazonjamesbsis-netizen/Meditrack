@@ -1,11 +1,16 @@
 "use client"
 
 import { SessionProvider } from "next-auth/react"
+import { DarkModeProvider } from "@/app/meditrack/DarkModeContext"
 
 type Props = {
   children?: React.ReactNode
 }
 
 export const Providers = ({ children }: Props) => {
-  return <SessionProvider>{children}</SessionProvider>
+  return (
+    <DarkModeProvider>
+      <SessionProvider>{children}</SessionProvider>
+    </DarkModeProvider>
+  )
 }

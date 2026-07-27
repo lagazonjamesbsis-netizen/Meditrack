@@ -1,7 +1,5 @@
-"use client";
+import AdminEvents from "@/admin_view/admin_events";
 
-import AdminEvents from "../../../admin_view/admin_events";
-
-export default function EventsPage() {
+export default function Page() {
   return <AdminEvents />;
 }

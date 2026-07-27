@@ -1,7 +1,5 @@
-"use client";
+import AdminApprovalRequest from "@/admin_view/admin_requests";
 
-import AdminRequests from "../../../admin_view/admin_requests";
-
-export default function RequestsPage() {
-  return <AdminRequests />;
+export default function Page() {
+  return <AdminApprovalRequest />;
 }

@@ -28,7 +28,7 @@ export default async function DashboardUsersPage({
 
   return (
     <section className="main flex flex-col">
-      <div className="main__header font-semibold py-3 px-5 border-b bg-gray-100 border-gray-100">
+      <div className="main__header font-semibold py-3 px-5 border-b bg-gray-100 dark:bg-gray-800 border-gray-100 dark:border-gray-700">
         Users
       </div>
       <div className="main__content py-3 px-5">

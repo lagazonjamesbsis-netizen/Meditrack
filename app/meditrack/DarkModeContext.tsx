@@ -1,5 +1,5 @@
 'use client'
-import { createContext, useContext, useState, ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 
 interface DarkModeContextType {
   darkMode: boolean
@@ -11,8 +11,30 @@ const DarkModeContext = createContext<DarkModeContextType>({
   setDarkMode: () => {}
 })
 
+const STORAGE_KEY = 'darkMode'
+
 export function DarkModeProvider({ children }: { children: ReactNode }) {
   const [darkMode, setDarkMode] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    const initial = stored === 'true'
+    setDarkMode(initial)
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) return
+    const root = document.documentElement
+    if (darkMode) {
+      root.classList.add('dark')
+    } else {
+      root.classList.remove('dark')
+    }
+    localStorage.setItem(STORAGE_KEY, String(darkMode))
+  }, [darkMode, mounted])
+
   return (
     <DarkModeContext.Provider value={{ darkMode, setDarkMode }}>
       {children}

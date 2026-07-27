@@ -383,7 +383,7 @@ function Modal({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded w-full max-w-md p-6 mx-4"
+        className="bg-background rounded w-full max-w-md p-6 mx-4"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-5">

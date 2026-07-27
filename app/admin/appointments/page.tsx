@@ -1,7 +1,5 @@
-"use client";
+import AdminAppointments from "@/admin_view/admin_appointments"; // ✅
 
-import AdminAppointments from "../../../admin_view/admin_appointments";
-
-export default function AppointmentsPage() {
+export default function Page() {
   return <AdminAppointments />;
 }
