@@ -1,15 +1,6 @@
 // File location: admin_view/admin_layout.tsx
 "use client";
 
-import {
-  Activity,
-  CalendarCheck,
-  ClipboardList,
-  HeartPulse,
-  LayoutDashboard,
-  Plus,
-  Users,
-} from "lucide-react";
 import { type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -19,12 +10,12 @@ import { CurrentUserProvider } from "@/app/admin/CurrentUserContext";
 import { AdminDataProvider } from "@/app/admin/AdminDataContext";
 
 const navItems = [
-  { label: "Dashboard", icon: LayoutDashboard, href: "/admin" },
-  { label: "Analytics", icon: Activity, href: "/admin/analytics" },
-  { label: "User management", icon: Users, href: "/admin/users" },
-  { label: "Approval requests", icon: CalendarCheck, href: "/admin/requests" },
-  { label: "Events & services", icon: HeartPulse, href: "/admin/events" },
-  { label: "Appointment schedule", icon: ClipboardList, href: "/admin/appointments" },
+  { label: "Dashboard", icon: "/dashboard.png", href: "/admin" },
+  { label: "Analytics", icon: "/analytics.png", href: "/admin/analytics" },
+  { label: "User management", icon: "/user-management.png", href: "/admin/users" },
+  { label: "Approval requests", icon: "/approval-request.png", href: "/admin/requests" },
+  { label: "Events & services", icon: "/events-services.png", href: "/admin/events" },
+  { label: "Appointment schedule", icon: "/appointment-schedule.png", href: "/admin/appointments" },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
@@ -44,8 +35,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       <aside className={`w-[400px] ${darkMode ? "bg-[#050617] border-[rgba(255,255,255,0.08)]" : "bg-[#F9F9F9] border-[rgba(15,60,95,0.12)]"} border-r fixed top-0 left-0 h-screen flex flex-col gap-5 pt-8 pb-6 px-5 shadow-[0_24px_60px_rgba(15,60,95,0.12)] overflow-hidden`}>
         <div className="flex items-center gap-3 pl-4">
           <div className="relative flex w-[68px] h-[68px] items-center justify-center flex-shrink-0">
-            <Plus className="absolute h-14 w-14 text-cyan-500" strokeWidth={4} />
-            <HeartPulse className="z-10 h-6 w-6 text-white" fill="currentColor" />
+            <img src="/meditrack-logo.png" alt="MediTrack" className="w-full h-full object-contain" />
           </div>
           <div>
             <h1 className={`font-bebas text-[50px] leading-none m-0 ${darkMode ? "text-[#F9FAFB]" : "text-[#0F588B]"}`}>MEDITRACK</h1>
@@ -56,7 +46,6 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         <nav className="flex-1 mt-2">
           <p className="font-poppins text-[13px] font-bold text-gray-400 uppercase tracking-[1px] mb-2 pl-3">Menu</p>
           {navItems.map((item) => {
-            const Icon = item.icon;
             const active = pathname === item.href;
             return (
               <Link
@@ -73,7 +62,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                 }`}
               >
                 <span className="inline-flex items-center justify-center w-[44px] h-[44px] flex-shrink-0">
-                  <Icon size={28} />
+                  <img src={item.icon} alt="" className="h-7 w-7 object-contain" />
                 </span>
                 {item.label}
               </Link>

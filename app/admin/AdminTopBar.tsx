@@ -1,7 +1,7 @@
 // File location: app/admin/AdminTopBar.tsx
 "use client";
 
-import { Bell, LogOut, Moon, Settings, UserRound, X } from "lucide-react";
+import { LogOut, Moon, Settings, UserRound, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -125,7 +125,7 @@ export default function AdminTopBar() {
           className={`relative ${darkMode ? "text-gray-300" : "text-[#5a6b76]"}`}
           title="Notifications"
         >
-          <Bell size={20} />
+          <img src="/icon-notification.png" alt="Notifications" className="h-5 w-5 object-contain" />
           <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full" />
         </button>
         {notifOpen && <NotificationDropdown darkMode={darkMode} onClose={() => setNotifOpen(false)} />}

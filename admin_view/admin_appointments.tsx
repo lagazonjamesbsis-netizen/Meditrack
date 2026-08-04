@@ -1,3 +1,4 @@
+// File location: admin_view/admin_appointments.tsx
 "use client";
 
 import { useState } from "react";
@@ -124,106 +125,108 @@ export default function AdminAppointments() {
   const visibleHistory = showAllHistory ? history : history.slice(0, PAGE_SIZE);
 
   return (
-    <div>
-      <h1 className="text-[32px] text-[#1d4662] my-[14px] text-left font-bold">Appointment Schedule</h1>
+    <div className="flex-1">
+      <div className="px-12 pt-5 pb-12">
+        <h1 className="text-[32px] text-[#1d4662] my-[14px] text-left font-bold">Appointment Schedule</h1>
 
-      {/* Today's Schedule */}
-      <div className="bg-white border border-[rgba(15,60,95,0.08)] p-4 rounded-[24px] mb-7 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.06)]">
-        <h2 className="text-[40px] text-[#1d4662] m-0 mb-[18px] text-center font-bold">Today&rsquo;s Schedule</h2>
-        <div className="grid grid-cols-3 gap-[22px] max-[1100px]:grid-cols-2 max-[600px]:grid-cols-1">
-          {todaySchedule.map((appt) => (
-            <div key={appt.id} className="bg-white p-[22px] rounded-[18px] border border-[rgba(15,60,95,0.10)] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)] flex flex-col gap-[18px]">
-              <PatientHeader appt={appt} />
-              <InfoBox appt={appt} />
-              <div className="flex justify-end">
-                <button
-                  onClick={() => notify(appt)}
-                  className={`px-5 py-2.5 rounded-md text-sm font-semibold border-none cursor-pointer transition-colors ${
-                    notified.has(appt.ptn) ? "bg-green-600 text-white" : "bg-[#4E69D3] text-white hover:bg-[#3D56B8]"
-                  }`}
-                >
-                  {notified.has(appt.ptn) ? "Sent!" : "Notify"}
-                </button>
+        {/* Today's Schedule */}
+        <div className="bg-[#f3f1fd] border border-[rgba(15,60,95,0.08)] p-4 rounded-[24px] mb-7 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.06)]">
+          <h2 className="text-[32px] text-[#1d4662] m-0 mb-[18px] text-center font-bold">Today&rsquo;s Schedule</h2>
+          <div className="grid grid-cols-3 gap-[22px] max-[1100px]:grid-cols-2 max-[600px]:grid-cols-1">
+            {todaySchedule.map((appt) => (
+              <div key={appt.id} className="bg-white p-[22px] rounded-[18px] border border-slate-200 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)] flex flex-col gap-[18px]">
+                <PatientHeader appt={appt} />
+                <InfoBox appt={appt} />
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => notify(appt)}
+                    className={`px-5 py-2.5 rounded-md text-sm font-semibold border-none cursor-pointer transition-colors ${
+                      notified.has(appt.ptn) ? "bg-green-600 text-white" : "bg-[#4E69D3] text-white hover:bg-[#3D56B8]"
+                    }`}
+                  >
+                    {notified.has(appt.ptn) ? "Sent!" : "Notify"}
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
 
-      {/* Upcoming Appointment */}
-      <div className="bg-white border border-[rgba(15,60,95,0.08)] p-4 rounded-[24px] mb-7 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.06)]">
-        <h2 className="text-[40px] text-[#1d4662] m-0 mb-[18px] text-center font-bold">Upcoming Appointment</h2>
-        <div className="grid grid-cols-3 gap-[22px] max-[1100px]:grid-cols-2 max-[600px]:grid-cols-1">
-          {visibleUpcoming.map((appt) => (
-            <div key={appt.id} className="bg-white p-[22px] rounded-[18px] border border-[rgba(15,60,95,0.10)] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)] flex flex-col gap-[18px]">
-              <PatientHeader appt={appt} />
-              <InfoBox appt={appt} />
-              <div className="flex justify-between gap-[18px]">
-                <button
-                  onClick={() => notify(appt)}
-                  className={`px-5 py-2.5 rounded-md text-sm font-semibold border-none cursor-pointer transition-colors flex-1 ${
-                    notified.has(appt.ptn) ? "bg-green-600 text-white" : "bg-[#4E69D3] text-white hover:bg-[#3D56B8]"
-                  }`}
-                >
-                  {notified.has(appt.ptn) ? "Sent!" : "Notify"}
-                </button>
-                <button
-                  onClick={() => cancelAppointment(appt.id)}
-                  className="flex-1 bg-transparent text-red-600 border border-red-600 hover:bg-red-50 px-4 py-2.5 rounded-md text-sm font-semibold cursor-pointer transition-colors"
-                >
-                  Cancel Appointment
-                </button>
+        {/* Upcoming Appointment */}
+        <div className="bg-[#f3f1fd] border border-[rgba(15,60,95,0.08)] p-4 rounded-[24px] mb-7 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.06)]">
+          <h2 className="text-[32px] text-[#1d4662] m-0 mb-[18px] text-center font-bold">Upcoming Appointment</h2>
+          <div className="grid grid-cols-3 gap-[22px] max-[1100px]:grid-cols-2 max-[600px]:grid-cols-1">
+            {visibleUpcoming.map((appt) => (
+              <div key={appt.id} className="bg-white p-[22px] rounded-[18px] border border-slate-200 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)] flex flex-col gap-[18px]">
+                <PatientHeader appt={appt} />
+                <InfoBox appt={appt} />
+                <div className="flex justify-between gap-[18px]">
+                  <button
+                    onClick={() => notify(appt)}
+                    className={`px-5 py-2.5 rounded-md text-sm font-semibold border-none cursor-pointer transition-colors flex-1 ${
+                      notified.has(appt.ptn) ? "bg-green-600 text-white" : "bg-[#4E69D3] text-white hover:bg-[#3D56B8]"
+                    }`}
+                  >
+                    {notified.has(appt.ptn) ? "Sent!" : "Notify"}
+                  </button>
+                  <button
+                    onClick={() => cancelAppointment(appt.id)}
+                    className="flex-1 bg-transparent text-red-600 border border-red-600 hover:bg-red-50 px-4 py-2.5 rounded-md text-sm font-semibold cursor-pointer transition-colors"
+                  >
+                    Cancel Appointment
+                  </button>
+                </div>
               </div>
+            ))}
+            {visibleUpcoming.length === 0 && (
+              <p className="col-span-3 py-6 text-center text-[15px] text-slate-400">No upcoming appointments.</p>
+            )}
+          </div>
+          {upcoming.length > PAGE_SIZE && (
+            <div className="flex justify-center mt-3">
+              <button
+                onClick={() => setShowAllUpcoming((v) => !v)}
+                className="bg-[#4E69D3] text-white px-5 py-2.5 rounded-full border-none cursor-pointer hover:bg-[#3D56B8] transition-colors"
+              >
+                {showAllUpcoming ? "Show Less" : "Show All"}
+              </button>
             </div>
-          ))}
-          {visibleUpcoming.length === 0 && (
-            <p className="col-span-3 py-6 text-center text-[15px] text-slate-400">No upcoming appointments.</p>
           )}
         </div>
-        {upcoming.length > PAGE_SIZE && (
-          <div className="flex justify-center mt-3">
-            <button
-              onClick={() => setShowAllUpcoming((v) => !v)}
-              className="bg-[#4E69D3] text-white px-5 py-2.5 rounded-full border-none cursor-pointer hover:bg-[#3D56B8] transition-colors"
-            >
-              {showAllUpcoming ? "Show Less" : "Show All"}
-            </button>
-          </div>
-        )}
-      </div>
 
-      {/* Appointment History */}
-      <div className="bg-white border border-[rgba(15,60,95,0.08)] p-4 rounded-[24px] mb-7 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.06)]">
-        <h2 className="text-[40px] text-[#1d4662] m-0 mb-[18px] text-center font-bold">Appointment History</h2>
-        <div className="grid grid-cols-3 gap-[22px] max-[1100px]:grid-cols-2 max-[600px]:grid-cols-1">
-          {visibleHistory.map((appt) => (
-            <div key={appt.id} className="bg-white p-[22px] rounded-[18px] border border-[rgba(15,60,95,0.10)] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)] flex flex-col gap-[18px]">
-              <PatientHeader appt={appt} />
-              <InfoBox appt={appt} />
-              <div className="flex justify-between gap-[18px]">
-                <span className="flex-1 bg-green-600 text-white px-4 py-2.5 rounded-md text-sm font-semibold text-center">
-                  Completed
-                </span>
-                <button
-                  onClick={() => setDetailsFor(appt)}
-                  className="flex-1 bg-transparent text-[#4E69D3] border border-[#4E69D3] hover:bg-[#EEF0FB] px-4 py-2.5 rounded-md text-sm font-semibold cursor-pointer transition-colors"
-                >
-                  View Details
-                </button>
+        {/* Appointment History */}
+        <div className="bg-[#f3f1fd] border border-[rgba(15,60,95,0.08)] p-4 rounded-[24px] mb-7 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.06)]">
+          <h2 className="text-[32px] text-[#1d4662] m-0 mb-[18px] text-center font-bold">Appointment History</h2>
+          <div className="grid grid-cols-3 gap-[22px] max-[1100px]:grid-cols-2 max-[600px]:grid-cols-1">
+            {visibleHistory.map((appt) => (
+              <div key={appt.id} className="bg-white p-[22px] rounded-[18px] border border-slate-200 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)] flex flex-col gap-[18px]">
+                <PatientHeader appt={appt} />
+                <InfoBox appt={appt} />
+                <div className="flex justify-between gap-[18px]">
+                  <span className="flex-1 bg-green-600 text-white px-4 py-2.5 rounded-md text-sm font-semibold text-center">
+                    Completed
+                  </span>
+                  <button
+                    onClick={() => setDetailsFor(appt)}
+                    className="flex-1 bg-transparent text-[#4E69D3] border border-[#4E69D3] hover:bg-[#EEF0FB] px-4 py-2.5 rounded-md text-sm font-semibold cursor-pointer transition-colors"
+                  >
+                    View Details
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-        {history.length > PAGE_SIZE && (
-          <div className="flex justify-center mt-3">
-            <button
-              onClick={() => setShowAllHistory((v) => !v)}
-              className="bg-[#4E69D3] text-white px-5 py-2.5 rounded-full border-none cursor-pointer hover:bg-[#3D56B8] transition-colors"
-            >
-              {showAllHistory ? "Show Less" : "Show All"}
-            </button>
+            ))}
           </div>
-        )}
+          {history.length > PAGE_SIZE && (
+            <div className="flex justify-center mt-3">
+              <button
+                onClick={() => setShowAllHistory((v) => !v)}
+                className="bg-[#4E69D3] text-white px-5 py-2.5 rounded-full border-none cursor-pointer hover:bg-[#3D56B8] transition-colors"
+              >
+                {showAllHistory ? "Show Less" : "Show All"}
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {detailsFor && (

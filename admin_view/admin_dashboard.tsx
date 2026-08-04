@@ -1,3 +1,4 @@
+// File location: admin_view/admin_dashboard.tsx
 "use client";
 
 import {
@@ -114,7 +115,7 @@ function AppointmentCard({ appointment }: { appointment: string[] }) {
 function ScheduleSection({ title, appointments, compact = false }: { title: string; appointments: string[][]; compact?: boolean }) {
   return (
     <section>
-      <h2 className="mb-3 text-center text-[32px] font-bold text-[#1d4662]">{title}</h2>
+      <h2 className="mb-3 text-center text-[28px] font-bold text-[#1d4662]">{title}</h2>
       <div className={compact ? "grid gap-3 sm:grid-cols-2 xl:grid-cols-3" : "grid gap-3 md:grid-cols-3"}>
         {appointments.map((appointment) => <AppointmentCard key={`${title}-${appointment[0]}`} appointment={appointment} />)}
       </div>
@@ -128,123 +129,125 @@ export default function AdminDashboard() {
   const concerns = concernsByPeriod[period];
 
   return (
-    <div className="mx-auto max-w-[1600px] px-6 py-8 lg:px-10 xl:px-14">
-      <h1 className="mb-7 text-[32px] font-extrabold tracking-tight text-[#286486]">Hello, Admin!</h1>
+    <div className="flex-1">
+      <div className="px-12 pt-5 pb-12">
+        <h1 className="mb-7 text-[32px] font-extrabold tracking-tight text-[#286486]">Hello, Admin!</h1>
 
-      <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        {metrics.map((metric) => {
-          const Icon = metric.icon;
-          return (
-            <Link
-              key={metric.label}
-              href={metric.href}
-              className="relative min-h-32 rounded-lg border border-slate-300 bg-white p-4 shadow-sm hover:border-sky-300 hover:shadow-md transition"
-            >
-              {metric.trend && <span className="absolute right-3 top-3 text-[9px] font-bold text-emerald-500">{metric.trend}</span>}
-              <div className={`mb-4 flex h-9 w-9 items-center justify-center rounded-lg ${metric.bg} ${metric.color}`}>
-                <Icon size={23} />
-              </div>
-              <div className="text-sm font-medium text-slate-500">{metric.label}</div>
-              <div className="mt-1 text-2xl font-extrabold text-slate-800">{metric.value}</div>
+        <section className="grid grid-cols-2 gap-5 lg:grid-cols-4">
+          {metrics.map((metric) => {
+            const Icon = metric.icon;
+            return (
+              <Link
+                key={metric.label}
+                href={metric.href}
+                className="relative min-h-32 rounded-[24px] border border-[rgba(15,60,95,0.08)] bg-white/65 p-4 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.06)] hover:border-sky-300 hover:shadow-md transition"
+              >
+                {metric.trend && <span className="absolute right-3 top-3 text-[9px] font-bold text-emerald-500">{metric.trend}</span>}
+                <div className={`mb-4 flex h-9 w-9 items-center justify-center rounded-lg ${metric.bg} ${metric.color}`}>
+                  <Icon size={23} />
+                </div>
+                <div className="text-sm font-medium text-slate-500">{metric.label}</div>
+                <div className="mt-1 text-2xl font-extrabold text-slate-800">{metric.value}</div>
+              </Link>
+            );
+          })}
+        </section>
+
+        <section className="mt-5 w-full rounded-[24px] border border-[rgba(15,60,95,0.08)] bg-white/65 p-6 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.06)]">
+          <div className="mb-4 flex items-start justify-between">
+            <h2 className="max-w-36 text-lg font-bold leading-5 text-slate-700">Top Health<br />Concern</h2>
+            <div className="relative">
+              <button
+                onClick={() => setPeriodOpen((v) => !v)}
+                className="flex items-center gap-2 rounded border border-slate-300 px-2 py-1 text-[10px] font-semibold text-slate-600"
+              >
+                {period} <ChevronDown size={12} />
+              </button>
+              {periodOpen && (
+                <>
+                  <div className="fixed inset-0 z-10" onClick={() => setPeriodOpen(false)} />
+                  <div className="absolute right-0 top-full mt-1 z-20 rounded-lg border border-slate-300 bg-white shadow-lg overflow-hidden">
+                    {periods.map((p) => (
+                      <button
+                        key={p}
+                        onClick={() => { setPeriod(p); setPeriodOpen(false); }}
+                        className={`block w-full px-4 py-2.5 text-[11px] font-semibold text-left whitespace-nowrap ${
+                          period === p ? "bg-[#4E69D3] text-white" : "text-slate-600 hover:bg-slate-100"
+                        }`}
+                      >
+                        {p}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+          <div className="flex gap-6">
+            <div className="space-y-1.5 pt-2 text-[11px] font-medium text-slate-500 w-40 shrink-0">
+              {concerns.map((c) => (
+                <div key={c.label}><i className={`mr-1 inline-block h-2 w-2 rounded-sm ${c.color}`} />{c.label}</div>
+              ))}
+            </div>
+            <div className="flex flex-1 items-end gap-6 border-b border-l border-slate-300 px-6 pt-5">
+              {concerns.map((c) => (
+                <div key={c.label} className={`flex-1 rounded-t ${c.color}`} style={{ height: `${c.height}px` }} />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <div className="mt-5 w-full space-y-5 rounded-[24px] border border-[rgba(15,60,95,0.08)] bg-white/65 p-6 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.06)]">
+          <ScheduleSection title="Today’s Schedule" appointments={todayAppointments} />
+          <ScheduleSection title="Upcoming Schedule" appointments={upcomingAppointments} compact />
+        </div>
+
+        <section className="mt-5 w-full rounded-[24px] border border-[rgba(15,60,95,0.08)] bg-white/65 p-6 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.06)]">
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="text-2xl font-extrabold text-slate-800">Healthcare Event & Services</h2>
+            <Link href="/admin/events" className="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-sky-600">
+              See more <ChevronRight size={14} />
             </Link>
-          );
-        })}
-      </section>
-
-      <section className="mt-8 w-full rounded-lg border border-slate-300 bg-white p-6 shadow-sm">
-        <div className="mb-4 flex items-start justify-between">
-          <h2 className="max-w-36 text-lg font-bold leading-5 text-slate-600">Top Health<br />Concern</h2>
-          <div className="relative">
-            <button
-              onClick={() => setPeriodOpen((v) => !v)}
-              className="flex items-center gap-2 rounded border border-slate-300 px-2 py-1 text-[10px] font-semibold text-slate-600"
-            >
-              {period} <ChevronDown size={12} />
-            </button>
-            {periodOpen && (
-              <>
-                <div className="fixed inset-0 z-10" onClick={() => setPeriodOpen(false)} />
-                <div className="absolute right-0 top-full mt-1 z-20 rounded-lg border border-slate-300 bg-white shadow-lg overflow-hidden">
-                  {periods.map((p) => (
-                    <button
-                      key={p}
-                      onClick={() => { setPeriod(p); setPeriodOpen(false); }}
-                      className={`block w-full px-4 py-2.5 text-[11px] font-semibold text-left whitespace-nowrap ${
-                        period === p ? "bg-[#4E69D3] text-white" : "text-slate-600 hover:bg-slate-100"
-                      }`}
-                    >
-                      {p}
-                    </button>
-                  ))}
-                </div>
-              </>
-            )}
           </div>
-        </div>
-        <div className="flex gap-6">
-          <div className="space-y-1.5 pt-2 text-[11px] font-medium text-slate-500 w-40 shrink-0">
-            {concerns.map((c) => (
-              <div key={c.label}><i className={`mr-1 inline-block h-2 w-2 rounded-sm ${c.color}`} />{c.label}</div>
-            ))}
+
+          <h3 className="mb-3 text-center text-lg font-bold text-slate-600">Event</h3>
+          <div className="grid gap-4 sm:grid-cols-3">
+            {eventCards.map((card) => {
+              const Icon = card.icon;
+              return (
+                <Link
+                  key={card.title}
+                  href="/admin/events"
+                  className="flex min-h-28 items-center justify-center gap-3 rounded-lg border border-slate-200 bg-white px-4 shadow-sm hover:border-sky-300 hover:shadow-md transition"
+                >
+                  <div className={`flex h-10 w-10 items-center justify-center rounded-full ${card.tone}`}><Icon size={23} /></div>
+                  <div>
+                    <div className="whitespace-pre-line text-xs font-bold leading-4 text-slate-600">{card.title}</div>
+                    <div className="mt-1 text-[8px] text-slate-400">{card.subtitle}</div>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
-          <div className="flex flex-1 items-end gap-6 border-b border-l border-slate-300 px-6 pt-5">
-            {concerns.map((c) => (
-              <div key={c.label} className={`flex-1 rounded-t ${c.color}`} style={{ height: `${c.height}px` }} />
-            ))}
-          </div>
-        </div>
-      </section>
 
-      <div className="mt-8 w-full space-y-8">
-        <ScheduleSection title="Today’s Schedule" appointments={todayAppointments} />
-        <ScheduleSection title="Upcoming Schedule" appointments={upcomingAppointments} compact />
-      </div>
-
-      <section className="mt-10 border-t border-slate-300 pt-7">
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-2xl font-extrabold text-slate-800">Healthcare Event & Services</h2>
-          <Link href="/admin/events" className="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-sky-600">
-            See more <ChevronRight size={14} />
-          </Link>
-        </div>
-
-        <h3 className="mb-3 text-center text-lg font-bold text-slate-600">Event</h3>
-        <div className="grid gap-4 sm:grid-cols-3">
-          {eventCards.map((card) => {
-            const Icon = card.icon;
-            return (
-              <Link
-                key={card.title}
-                href="/admin/events"
-                className="flex min-h-28 items-center justify-center gap-3 rounded-lg border border-slate-300 bg-white px-4 shadow-sm hover:border-sky-300 hover:shadow-md transition"
-              >
-                <div className={`flex h-10 w-10 items-center justify-center rounded-full ${card.tone}`}><Icon size={23} /></div>
-                <div>
+          <h3 className="mb-3 mt-8 text-center text-lg font-bold text-slate-600">Services</h3>
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
+            {serviceCards.map((card) => {
+              const Icon = card.icon;
+              return (
+                <Link
+                  key={card.title}
+                  href="/admin/events"
+                  className="flex min-h-28 items-center justify-center gap-3 rounded-lg border border-slate-200 bg-white px-4 shadow-sm hover:border-sky-300 hover:shadow-md transition"
+                >
+                  <div className={`flex h-10 w-10 items-center justify-center rounded-full ${card.tone}`}><Icon size={23} /></div>
                   <div className="whitespace-pre-line text-xs font-bold leading-4 text-slate-600">{card.title}</div>
-                  <div className="mt-1 text-[8px] text-slate-400">{card.subtitle}</div>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-
-        <h3 className="mb-3 mt-8 text-center text-lg font-bold text-slate-600">Services</h3>
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
-          {serviceCards.map((card) => {
-            const Icon = card.icon;
-            return (
-              <Link
-                key={card.title}
-                href="/admin/events"
-                className="flex min-h-28 items-center justify-center gap-3 rounded-lg border border-slate-300 bg-white px-4 shadow-sm hover:border-sky-300 hover:shadow-md transition"
-              >
-                <div className={`flex h-10 w-10 items-center justify-center rounded-full ${card.tone}`}><Icon size={23} /></div>
-                <div className="whitespace-pre-line text-xs font-bold leading-4 text-slate-600">{card.title}</div>
-              </Link>
-            );
-          })}
-        </div>
-      </section>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
