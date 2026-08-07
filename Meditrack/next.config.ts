@@ -1,7 +1,11 @@
 import type { NextConfig } from 'next'
+import path from 'path'
 
 const nextConfig: NextConfig = {
   devIndicators: false,
+  turbopack: {
+    root: __dirname,
+  },
   // Required to enable the 'use cache' directive and Cache Components (PPR)
   cacheComponents: true,
   experimental: {

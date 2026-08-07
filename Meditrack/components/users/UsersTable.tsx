@@ -198,9 +198,9 @@ export default function UsersTable({
           <p className="text-foreground/60">
             Page {page} of {totalPages}
           </p>
-          <div className="flex gap-1">
+          <div className="flex gap-1 overflow-x-auto max-w-full pb-1">
             <button
-              className="button button--circle"
+              className="button button--circle flex-shrink-0"
               onClick={() => goToPage(page - 1)}
               disabled={page === 1}
               title="Previous page"
@@ -210,14 +210,14 @@ export default function UsersTable({
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
               <button
                 key={p}
-                className={`button min-w-9 ${page === p ? 'button--accent' : ''}`}
+                className={`button min-w-9 flex-shrink-0 ${page === p ? 'button--accent' : ''}`}
                 onClick={() => goToPage(p)}
               >
                 {p}
               </button>
             ))}
             <button
-              className="button button--circle"
+              className="button button--circle flex-shrink-0"
               onClick={() => goToPage(page + 1)}
               disabled={page === totalPages}
               title="Next page"

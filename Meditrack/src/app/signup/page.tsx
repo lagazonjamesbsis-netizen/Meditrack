@@ -1,321 +1,346 @@
 'use client'
 
-import { useState } from "react";
-import Link from "next/link";
-
-
-
-const Signup = () => {
+import { useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { Check, ChevronDown, Eye, EyeOff, X } from 'lucide-react'
+import AuthShell from '@/components/auth/AuthShell'
+import Field from '@/components/auth/Field'
+import { useSignup } from '@/store/useSignup'
 
 const countries = [
-  {
-    name: "Philippines",
-    code: "+63",
-    flag: "/ph.png",
-  },
-  {
-    name: "United States",
-    code: "+1",
-    flag: "/us.png",
-  },
-  {
-    name: "Canada",
-    code: "+1",
-    flag: "/ca.png",
-  },
-  {
-    name: "United Kingdom",
-    code: "+44",
-    flag: "/gb.png",
-  },
-  {
-    name: "China",
-    code: "+86",
-    flag: "/cn.png" ,
-  },
-];
+  { name: 'Philippines', code: '+63', flag: '/ph.png' },
+  { name: 'United States', code: '+1', flag: '/us.png' },
+  { name: 'Canada', code: '+1', flag: '/ca.png' },
+  { name: 'United Kingdom', code: '+44', flag: '/gb.png' },
+  { name: 'China', code: '+86', flag: '/cn.png' },
+]
 
-const [selectedCountry, setSelectedCountry] = useState(
-  countries[0]
-);
+type Errors = Record<string, string>
 
-const [isOpen, setIsOpen] = useState(false);
+const Signup = () => {
+  const setPersonal = useSignup((state) => state.setPersonal)
+  const { push } = useRouter()
 
+  const formRef = useRef<HTMLFormElement>(null)
+
+  const [selectedCountry, setSelectedCountry] = useState(countries[0])
+  const [isOpen, setIsOpen] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
+
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [birthday, setBirthday] = useState('')
+  const [gender, setGender] = useState('')
+  const [mobile, setMobile] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+
+  const [errors, setErrors] = useState<Errors>({})
+
+  const requirements = [
+    { label: '12+ characters', met: password.length >= 12 },
+    { label: 'A-Z', met: /[A-Z]/.test(password) },
+    { label: 'a-z', met: /[a-z]/.test(password) },
+    { label: '0-9', met: /[0-9]/.test(password) },
+    { label: '@$!%*?&', met: /[@$!%*?&]/.test(password) },
+  ]
+
+  const metCount = requirements.filter((req) => req.met).length
+
+  const strength =
+    password.length === 0
+      ? null
+      : password.length < 8 || metCount <= 2
+        ? { label: 'Weak', color: 'bg-rose-500', text: 'text-rose-600', width: '33%' }
+        : metCount <= 4
+          ? { label: 'Fair', color: 'bg-amber-500', text: 'text-amber-600', width: '66%' }
+          : { label: 'Strong', color: 'bg-emerald-500', text: 'text-emerald-600', width: '100%' }
+
+  const passwordFeedback = (
+    <>
+      <ul className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 pl-0.5">
+        {requirements.map((req) => (
+          <li
+            key={req.label}
+            className={`flex items-center gap-1.5 text-[12px] ${
+              req.met ? 'text-ink' : 'text-slate/60'
+            }`}
+          >
+            {req.met ? (
+              <Check size={11} className="text-brand shrink-0" strokeWidth={3} />
+            ) : (
+              <span className="w-[11px] shrink-0 inline-block" />
+            )}
+            {req.label}
+          </li>
+        ))}
+      </ul>
+
+      {strength && (
+        <div className="mt-1">
+          <div className="h-1.5 w-full rounded-full bg-mist overflow-hidden">
+            <div
+              className={`h-full rounded-full ${strength.color} transition-all duration-300`}
+              style={{ width: strength.width }}
+            />
+          </div>
+          <p className={`mt-1 text-[12px] font-medium ${strength.text}`}>
+            Password strength: {strength.label}
+          </p>
+        </div>
+      )}
+    </>
+  )
+
+  const handleNext = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    const nextErrors: Errors = {}
+    if (!firstName.trim()) nextErrors.firstName = 'Enter your first name.'
+    if (!lastName.trim()) nextErrors.lastName = 'Enter your last name.'
+    if (!birthday) nextErrors.birthday = 'Select your birthday.'
+    if (!gender) nextErrors.gender = 'Select a gender.'
+    if (!mobile.trim()) nextErrors.mobile = 'Enter your mobile number.'
+    if (!email.trim()) nextErrors.email = 'Enter your email address.'
+    else if (!/\S+@\S+\.\S+/.test(email))
+      nextErrors.email = 'Enter a valid email address.'
+    if (password.length < 12)
+      nextErrors.password = 'Use at least 12 characters.'
+    if (confirmPassword !== password)
+      nextErrors.confirmPassword = 'Passwords don’t match.'
+
+    setErrors(nextErrors)
+
+    if (Object.keys(nextErrors).length > 0) {
+      const first = ['firstName', 'lastName', 'birthday', 'mobile', 'email', 'password', 'confirmPassword'].find(
+        (name) => nextErrors[name],
+      )
+      formRef.current?.querySelector<HTMLElement>(`[name="${first}"]`)?.focus()
+      return
+    }
+
+    setPersonal({
+      firstName,
+      lastName,
+      birthday,
+      gender,
+      countryCode: selectedCountry.code,
+      mobile,
+      email,
+      password,
+    })
+    push('/residence-details')
+  }
 
   return (
-    <div
-      className="min-h-screen flex flex-col lg:flex-row bg-cover bg-center bg-no-repeat"
-      style={{
-        backgroundImage: "url('/purplebackground.png')",
-      }}
-    >
-      {/* Logo Area */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center pt-4 pb-3 md:pt-6 md:pb-4 lg:py-0">
-        <div className="flex items-center justify-center">
-
-          <img src="/logo.png" alt="MediTrack Logo" className="w-15 md:w-32 lg:w-30 -mr-1"/>
-
-          <div className="grid grid-cols-1 text-left mr-2 md:mr-6 lg:mr-10">
-
-            <h1 
-              className="text-4xl md:text-5xl lg:text-7xl font-bold text-[#0F588B] leading-none"
-              style={{ fontFamily: "Bebas Neue" }}
-            >
-              MEDITRACK
-            </h1>
-            
-            <p
-              className="text-base md:text-lg lg:text-2xl text-[#0F588B] tracking-[0.13em] -mt-2 leading-none whitespace-nowrap"
-              style={{ fontFamily: "Asap Condensed" }}>
-              Stay On Track With Us
-            </p>
-          </div>
-
-        </div>
-      </div>
-
-      {/* Signup Area */}
-      <div className="flex-1 flex flex-col items-center justify-start lg:justify-center px-4 pb-10">
-
-        {/* Tabs - Same Size As Login */}
-        <div className="w-[92%] max-w-md mb-4">
-          <div className="flex bg-gray-100 rounded-xl p-1 shadow-md">
-
-            <Link
-              href="/login"
-              className="
-                flex-1
-                text-center
-                py-3
-                font-semibold
-                text-gray-500
-              "
-            >
-              Log In
-            </Link>
-
-            <Link
-              href="/signup"
-              className="
-                flex-1
-                bg-white
-                text-center
-                py-3
-                rounded-lg
-                font-semibold
-                shadow-sm
-              "
-            >
-              Sign Up
-            </Link>
-
-          </div>
-        </div>
-
-        {/* Signup Card */}
-        <div className="bg-white shadow-xl rounded-2xl p-6 w-[92%] max-w-md">
-
-          <h2 className="text-base font-bold mb-3">
-            Sign Up
-          </h2>
-
-          <input
-            type="text"
-            placeholder="First Name"
-            className="w-full py-2 border-b mb-2 text-sm outline-none"
+    <div className="lg:h-dvh lg:overflow-hidden">
+      <AuthShell
+        tab="signup"
+        step={1}
+        title="Sign Up"
+        subtitle="Share your details to set up your appointments and health records."
+        cardClassName="lg:max-w-2xl"
+      >
+      <form ref={formRef} onSubmit={handleNext} noValidate className="flex flex-col gap-3.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <Field
+            label="First name"
+            name="firstName"
+            placeholder="John"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            error={errors.firstName}
+            autoComplete="given-name"
+            required
           />
-
-          <input
-            type="text"
-            placeholder="Last Name"
-            className="w-full py-2 border-b mb-2 text-sm outline-none"
+          <Field
+            label="Last name"
+            name="lastName"
+            placeholder="Thomas"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            error={errors.lastName}
+            autoComplete="family-name"
+            required
           />
-
-          <label className="text-sm font-medium">
-            Birthday
-          </label>
-
-          <input
+          <Field
+            label="Birthday"
+            name="birthday"
             type="date"
-            className="w-full py-2 border-b mb-2 text-sm outline-none"
+            value={birthday}
+            onChange={(e) => setBirthday(e.target.value)}
+            error={errors.birthday}
+            required
           />
+        </div>
 
-          <label className="text-sm font-medium">
-            Gender
-          </label>
-
-          <div className="flex gap-4 md:gap-10 mt-2 mb-3">
-
-            <label className="flex items-center gap-1 text-sm font-medium cursor-pointer">
-              <input
-                type="radio"
-                name="gender"
-                className="w-4 h-4 accent-[#0F588B]"
-              />
-              <span>Male</span>
-            </label>
-
-            <label className="flex items-center gap-1 text-sm font-medium cursor-pointer">
-              <input
-                type="radio"
-                name="gender"
-                className="w-4 h-4 accent-[#0F588B]"
-              />
-              <span>Female</span>
-            </label>
-
-          </div>
-       
-       
-            <label className="text-sm font-medium">
-            Mobile Number
-            </label>
-
-            <div className="relative mb-2 mt-1">
-
-            <div className="flex items-center border-b">
-
-                <button
-                type="button"
-                onClick={() => setIsOpen(!isOpen)}
-                className="
-                    flex
-                    items-center
-                    gap-2
-                    py-2
-                    pr-3
-                "
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="field">
+            <span className="auth-label">
+              Gender<span className="text-brand"> *</span>
+            </span>
+            <div className="flex items-center gap-6 pt-1.5">
+              {['Male', 'Female'].map((option) => (
+                <label
+                  key={option}
+                  className="flex items-center gap-2 text-[14px] text-ink cursor-pointer"
                 >
-                
-            <img
-            src={selectedCountry.flag}
-            alt={selectedCountry.name}
-            className="w-6 h-4 object-cover"
-            />
-
-                <span className="text-sm">
-                    {selectedCountry.code}
-                </span>
-
-                <span className="text-xs">
-                    ▼
-                </span>
-                </button>
-
-                <input
-                type="text"
-                placeholder="Mobile Number"
-                className="
-                    flex-1
-                    py-2
-                    text-sm
-                    outline-none
-                "
-                />
-
+                  <input
+                    type="radio"
+                    name="gender"
+                    checked={gender === option}
+                    onChange={() => setGender(option)}
+                    className="w-4 h-4 accent-[#0F588B]"
+                  />
+                  {option}
+                </label>
+              ))}
             </div>
+            {errors.gender && <p className="error">{errors.gender}</p>}
+          </div>
 
-            {isOpen && (
+          <div className="relative lg:col-span-2">
+          <Field
+            label="Mobile number"
+            name="mobile"
+            placeholder="917 123 4567"
+            inputMode="tel"
+            value={mobile}
+            onChange={(e) => setMobile(e.target.value)}
+            error={errors.mobile}
+            autoComplete="tel-national"
+            required
+            leading={
+              <button
+                type="button"
+                onClick={() => setIsOpen((v) => !v)}
+                aria-label="Select country code"
+                className="flex items-center gap-1.5 bg-transparent p-1 pt-1.5 text-ink cursor-pointer"
+              >
+                <img src={selectedCountry.flag} alt="" className="w-6 h-4 object-cover" />
+                <span className="font-inter text-[15px] font-bold tracking-wide">
+                  {selectedCountry.code}
+                </span>
+                <ChevronDown size={14} className="text-slate" />
+              </button>
+            }
+          />
 
-                <div
-                className="
-                    absolute
-                    left-0
-                    top-full
-                    mt-2
-                    w-full sm:w-64
-                    bg-white
-                    border
-                    rounded-lg
-                    shadow-lg
-                    z-50
-                "
+          {isOpen && (
+            <div className="absolute left-0 top-full mt-1 w-full bg-white border border-line rounded-[3px] shadow-xl z-50 py-1">
+              {countries.map((country) => (
+                <button
+                  key={country.name}
+                  type="button"
+                  onClick={() => {
+                    setSelectedCountry(country)
+                    setIsOpen(false)
+                  }}
+                  className="w-full flex items-center gap-3 px-3.5 py-2.5 bg-white hover:bg-mist transition-colors cursor-pointer"
                 >
-
-                {countries.map((country) => (
-
-                    <button
-                    key={country.name}
-                    type="button"
-                    onClick={() => {
-                        setSelectedCountry(country);
-                        setIsOpen(false);
-                    }}
-                    className="
-                        w-full
-                        flex
-                        items-center
-                        gap-3
-                        px-3
-                        py-2
-                        hover:bg-gray-100
-                    "
-                    >
-
-                    
-            <img
-            src={country.flag}
-            alt={country.name}
-            className="w-6 h-4 object-cover"/>
-
-                    <span className="text-sm">
-                        {country.name}
-                    </span>
-
-                    <span className="ml-auto text-gray-500 text-sm">
-                        {country.code}
-                    </span>
-
-                    </button>
-
-                ))}
-
-                </div>
-
-            )}
-
+                  <img src={country.flag} alt="" className="w-6 h-4 object-cover" />
+                  <span className="text-[14px] text-ink">{country.name}</span>
+                  <span className="ml-auto font-inter text-[13px] font-bold text-slate">
+                    {country.code}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+          </div>
         </div>
 
+        <Field
+          label="Email address"
+          name="email"
+          type="email"
+          placeholder="you@email.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          error={errors.email}
+          autoComplete="email"
+          required
+        />
 
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full py-2 border-b mb-2 text-sm outline-none"
-          />
+        <Field
+          label="Password"
+          name="password"
+          type={showPassword ? 'text' : 'password'}
+          placeholder="••••••••"
+          value={password}
+          onChange={(e) => {
+            setPassword(e.target.value)
+            if (errors.password) setErrors((prev) => ({ ...prev, password: '' }))
+          }}
+          error={errors.password}
+          autoComplete="new-password"
+          required
+          trailing={
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              className="bg-transparent text-slate hover:text-brand transition-colors p-1"
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          }
+        />
 
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full py-2 border-b mb-2 text-sm outline-none"
-          />
+        {password !== '' && passwordFeedback}
 
-          <input
-            type="password"
-            placeholder="Confirm Password"
-            className="w-full py-2 border-b mb-4 text-sm outline-none"
-          />
+        <Field
+          label="Confirm password"
+          name="confirmPassword"
+          type={showConfirm ? 'text' : 'password'}
+          placeholder="••••••••"
+          value={confirmPassword}
+          onChange={(e) => {
+            setConfirmPassword(e.target.value)
+            if (errors.confirmPassword)
+              setErrors((prev) => ({ ...prev, confirmPassword: '' }))
+          }}
+          error={errors.confirmPassword}
+          autoComplete="new-password"
+          required
+          trailing={
+            <button
+              type="button"
+              onClick={() => setShowConfirm((v) => !v)}
+              aria-label={showConfirm ? 'Hide password' : 'Show password'}
+              className="bg-transparent text-slate hover:text-brand transition-colors p-1"
+            >
+              {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          }
+        />
 
-          <Link
-            href="/residence-details"
-            className="
-              block
-              w-full
-              bg-[#0F588B]
-              text-white
-              py-2.5
-              rounded-lg
-              text-center
-              text-sm
-            "
+        {confirmPassword !== '' && (
+          <p
+            className={`flex items-center gap-1.5 text-[12.5px] ${
+              confirmPassword === password ? 'text-emerald-600' : 'text-rose-600'
+            }`}
           >
-            Sign Up
-          </Link>
+            {confirmPassword === password ? (
+              <Check size={12} className="shrink-0" strokeWidth={3} />
+            ) : (
+              <X size={12} className="shrink-0" strokeWidth={3} />
+            )}
+            {confirmPassword === password
+              ? 'Passwords match'
+              : 'Passwords don’t match'}
+          </p>
+        )}
 
-        </div>
-
-      </div>
+        <button type="submit" className="btn btn--primary">
+          Next
+        </button>
+      </form>
+      </AuthShell>
     </div>
-  );
-};
+  )
+}
 
-export default Signup;
+export default Signup

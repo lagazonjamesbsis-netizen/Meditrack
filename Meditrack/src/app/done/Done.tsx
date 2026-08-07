@@ -1,123 +1,61 @@
-import Link from "next/link";
-
+import Link from 'next/link'
+import AuthShell from '@/components/auth/AuthShell'
 
 const Done = () => {
   return (
-    <div
-      className="min-h-screen flex flex-col lg:flex-row bg-cover bg-center bg-no-repeat"
-      style={{
-        backgroundImage: "url('/purplebackground.png')",
-      }}
+    <AuthShell
+      title="All set"
+      subtitle="Your account is ready. Log in to start tracking your health."
     >
-{/* Logo Area */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center pt-4 pb-3 md:pt-6 md:pb-4 lg:py-0">
-        <div className="flex items-center justify-center">
+      <div className="flex flex-col items-center gap-5 border-t border-line pt-8">
+        <div className="relative w-16 h-16 rounded-full bg-mist flex items-center justify-center">
+          <span className="absolute inset-0 rounded-full border-2 border-brand/30 border-t-brand animate-spin" />
+          <svg
+            className="relative"
+            width="30"
+            height="30"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="var(--color-brand)"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>
+        </div>
 
-          <img src="/logo.png" alt="MediTrack Logo" className="w-15 md:w-32 lg:w-30 -mr-1"/>
-
-          <div className="grid grid-cols-1 text-left mr-2 md:mr-6 lg:mr-10">
-
-            <h1 
-              className="text-4xl md:text-5xl lg:text-7xl font-bold text-[#0F588B] leading-none"
-              style={{ fontFamily: "Bebas Neue" }}
+        <div className="w-full flex flex-col items-center gap-2.5 rounded-2xl border border-line bg-mist/40 px-5 py-4 text-center">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 text-amber-600 text-[11px] font-bold uppercase tracking-[0.1em]">
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
-              MEDITRACK
-            </h1>
-            
-            <p
-              className="text-base md:text-lg lg:text-2xl text-[#0F588B] tracking-[0.13em] -mt-2 leading-none whitespace-nowrap"
-              style={{ fontFamily: "Asap Condensed" }}>
-              Stay On Track With Us
-            </p>
-          </div>
-
-        </div>
-</div>
-
-      {/* Form Area */}
-      <div className="flex-1 flex flex-col items-center justify-start px-4 pb-10">
-
-        {/* Back Button */}
-        <div className="w-[92%] max-w-md flex items-center mb-1">
-          <Link
-            href="/verification"
-            className="text-2xl text-black mr-3"
-          >
-            ←
-          </Link>
-        </div>
-
-        {/* Step Indicator */}
-        <div className="w-[92%] max-w-md mb-4">
-          <div className="flex bg-white rounded-xl p-3 shadow-md items-center justify-between">
-
-            <div className="flex flex-col items-center">
-              <div className="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center font-semibold">
-                ✓
-              </div>
-
-              <span className="text-xs mt-1">
-                Residence
-              </span>
-            </div>
-
-            <div className="flex-1 h-px bg-green-500 mx-2"></div>
-
-            <div className="flex flex-col items-center">
-              <div className="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center font-semibold">
-                ✓
-              </div>
-
-              <span className="text-xs mt-1">
-                Verification
-              </span>
-            </div>
-
-            <div className="flex-1 h-px bg-green-500 mx-2"></div>
-
-            <div className="flex flex-col items-center">
-              <div className="w-8 h-8 rounded-full bg-[#0F588B] text-white flex items-center justify-center font-semibold">
-                ✓
-              </div>
-
-              <span className="text-xs mt-1">
-                Done
-              </span>
-            </div>
-
-          </div>
-        </div>
-
-        {/* Success Card */}
-        <div className="bg-white shadow-xl rounded-2xl p-6 md:p-8 w-[92%] max-w-md text-center">
-
-          <h2 className="text-2xl md:text-4xl font-bold mb-6">
-            Done, You're all set!
-          </h2>
-
-          <p className="text-gray-500 mb-8">
-            Your account has been successfully created.
+              <path d="M12 6v6l4 2" />
+              <circle cx="12" cy="12" r="10" />
+            </svg>
+            Pending approval
+          </span>
+          <p className="text-[13.5px] leading-relaxed text-ink m-0">
+            Your account is waiting for approval. We&apos;ll send you a
+            notification once it&apos;s approved — please wait and check your
+            notifications regularly.
           </p>
-
-          <Link
-            href="/"
-            className="
-              block
-              w-full
-              bg-[#0F588B]
-              text-white
-              py-3
-              rounded-lg
-            "
-          >
-            Go to Login
-          </Link>
-
         </div>
 
+        <Link href="/login" className="btn btn--primary">
+          Back to log in
+        </Link>
       </div>
-    </div>
-  );
-};
+    </AuthShell>
+  )
+}
 
-export default Done;
+export default Done

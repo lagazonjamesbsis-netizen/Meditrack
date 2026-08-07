@@ -1,0 +1,20 @@
+import { Metadata } from "next"
+import { ReactNode } from "react"
+import TemplateBlank from "@/templates/Blank"
+
+export const metadata: Metadata = {
+  title: "Confirmation",
+  description: "Confirmation",
+}
+
+export default function ConfirmationLayout({
+  children
+}: {
+  children: ReactNode
+}) {
+  return (
+    <TemplateBlank>
+      {children}
+    </TemplateBlank>
+  )
+}

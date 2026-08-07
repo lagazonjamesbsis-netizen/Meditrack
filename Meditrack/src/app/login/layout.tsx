@@ -3,7 +3,7 @@ import { ReactNode } from "react"
 import TemplateBlank from "@/templates/Blank"
  
 export const metadata: Metadata = {
-  title: "Login",
+  title: "Meditrack | Login",
   description: "Login"
 }
 

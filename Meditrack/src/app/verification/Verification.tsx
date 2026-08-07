@@ -1,159 +1,94 @@
-import Link from "next/link";
+'use client'
+
+import { useRef, useState } from 'react'
+import Link from 'next/link'
+import AuthShell from '@/components/auth/AuthShell'
+import { useSignup } from '@/store/useSignup'
+
+const OTP_LENGTH = 6
 
 const Verification = () => {
+  const countryCode = useSignup((state) => state.countryCode)
+  const mobile = useSignup((state) => state.mobile)
+
+  const [otp, setOtp] = useState<string[]>(Array(OTP_LENGTH).fill(''))
+  const [resent, setResent] = useState(false)
+  const inputsRef = useRef<(HTMLInputElement | null)[]>([])
+
+  const maskedMobile =
+    mobile.length > 3
+      ? `${mobile.slice(0, 1)}••• ${mobile.slice(-3)}`
+      : '9••• ••• ••••'
+
+  const handleChange = (index: number, value: string) => {
+    const digit = value.replace(/\D/g, '').slice(-1)
+    const next = [...otp]
+    next[index] = digit
+    setOtp(next)
+
+    if (digit && index < OTP_LENGTH - 1) {
+      inputsRef.current[index + 1]?.focus()
+    }
+  }
+
+  const handleKeyDown = (
+    index: number,
+    e: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
+    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+      inputsRef.current[index - 1]?.focus()
+    }
+  }
+
   return (
-    <div
-      className="min-h-screen flex flex-col lg:flex-row bg-cover bg-center bg-no-repeat"
-      style={{
-        backgroundImage: "url('/purplebackground.png')",
-      }}
-    >
-      {/* Logo Area */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center pt-4 pb-3 md:pt-6 md:pb-4 lg:py-0">
-        <div className="flex items-center justify-center">
-
-          <img src="/logo.png" alt="MediTrack Logo" className="w-15 md:w-32 lg:w-30 -mr-1"/>
-
-          <div className="grid grid-cols-1 text-left mr-2 md:mr-6 lg:mr-10">
-
-            <h1 
-              className="text-4xl md:text-5xl lg:text-7xl font-bold text-[#0F588B] leading-none"
-              style={{ fontFamily: "Bebas Neue" }}
+    <AuthShell
+      step={5}
+      animate={false}
+      title="Verify your phone"
+      cardClassName="lg:max-w-2xl"
+      subtitle={`We sent a 6-digit code to ${countryCode} ${maskedMobile}.`}
+      backHref="/identification"
+      footer={
+        resent ? (
+          <>New code sent. Check your phone.</>
+        ) : (
+          <>
+            Didn&apos;t receive the code?{' '}
+            <button
+              type="button"
+              className="auth-link bg-transparent p-0 cursor-pointer"
+              onClick={() => setResent(true)}
             >
-              MEDITRACK
-            </h1>
-            
-            <p
-              className="text-base md:text-lg lg:text-2xl text-[#0F588B] tracking-[0.13em] -mt-2 leading-none whitespace-nowrap"
-              style={{ fontFamily: "Asap Condensed" }}>
-              Stay On Track With Us
-            </p>
-          </div>
-
-        </div>
-      </div>
-
-      {/* Form Area */}
-      <div className="flex-1 flex flex-col items-center justify-start px-4 pb-10">
-
-        {/* Back Button */}
-        <div className="w-[92%] max-w-md flex items-center mb-1">
-          <Link
-            href="/residence-details"
-            className="text-2xl text-black mr-3"
-          >
-            ←
-          </Link>
-        </div>
-
-        {/* Step Indicator */}
-        <div className="w-[92%] max-w-md mb-4">
-          <div className="flex bg-white rounded-xl p-3 shadow-md items-center justify-between">
-
-            <div className="flex flex-col items-center">
-              <div className="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center font-semibold">
-                ✓
-              </div>
-
-              <span className="text-xs mt-1">
-                Residence
-              </span>
-            </div>
-
-            <div className="flex-1 h-px bg-gray-300 mx-2"></div>
-
-            <div className="flex flex-col items-center">
-              <div className="w-8 h-8 rounded-full bg-[#0F588B] text-white flex items-center justify-center font-semibold">
-                2
-              </div>
-
-              <span className="text-xs mt-1">
-                Verification
-              </span>
-            </div>
-
-            <div className="flex-1 h-px bg-gray-300 mx-2"></div>
-
-            <div className="flex flex-col items-center">
-              <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center font-semibold">
-                3
-              </div>
-
-              <span className="text-xs mt-1">
-                Done
-              </span>
-            </div>
-
-          </div>
-        </div>
-
-        {/* Verification Card */}
-        <div className="bg-white shadow-xl rounded-2xl p-6 w-[92%] max-w-md">
-
-          <h2 className="text-lg font-bold mb-4">
-            Verification
-          </h2>
-
-          <p className="text-gray-500 text-sm mb-6">
-            Please type the verification code sent to
-            <br />
-            +63 9••• ••• ••••
-          </p>
-
-          <div className="flex justify-center gap-3 mb-4">
-
-            <input
-              type="text"
-              maxLength={1}
-              className="w-12 h-12 border rounded-lg text-center text-lg"
-            />
-
-            <input
-              type="text"
-              maxLength={1}
-              className="w-12 h-12 border rounded-lg text-center text-lg"
-            />
-
-            <input
-              type="text"
-              maxLength={1}
-              className="w-12 h-12 border rounded-lg text-center text-lg"
-            />
-
-            <input
-              type="text"
-              maxLength={1}
-              className="w-12 h-12 border rounded-lg text-center text-lg"
-            />
-
-          </div>
-
-          <div className="text-right mb-6">
-            <button className="text-sm text-[#0F588B]">
-              Resend Code
+              Resend
             </button>
-          </div>
-
-          <Link
-            href="/done"
-            className="
-              block
-              w-full
-              bg-[#0F588B]
-              text-white
-              text-center
-              py-3
-              rounded-lg
-            "
-          >
-            Confirm
-          </Link>
-
-        </div>
-
+          </>
+        )
+      }
+    >
+      <div className="flex justify-between gap-1.5 sm:gap-2">
+        {otp.map((digit, index) => (
+          <input
+            key={index}
+            ref={(el) => {
+              inputsRef.current[index] = el
+            }}
+            type="text"
+            inputMode="numeric"
+            maxLength={1}
+            value={digit}
+            onChange={(e) => handleChange(index, e.target.value)}
+            onKeyDown={(e) => handleKeyDown(index, e)}
+            aria-label={`Digit ${index + 1}`}
+            className="w-full max-w-[56px] min-w-0 h-[50px] sm:h-[56px] bg-white border border-line rounded-lg text-center font-bebas text-[24px] sm:text-[28px] text-ink outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition-colors duration-200"
+          />
+        ))}
       </div>
-    </div>
-  );
-};
 
-export default Verification;
+      <Link href="/done" className="btn btn--primary mt-8">
+        Verify code
+      </Link>
+    </AuthShell>
+  )
+}
+
+export default Verification

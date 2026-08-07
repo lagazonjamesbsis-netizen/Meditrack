@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useRef } from 'react'
 import { signupUser } from '@/lib/actions/user'
 import { useRouter } from 'next/navigation'
+import Field from '@/components/auth/Field'
 
 export default function FormSignup({ className }: { className?: string }) {
   // Hooks
@@ -31,44 +32,39 @@ export default function FormSignup({ className }: { className?: string }) {
       noValidate
       className={`flex flex-col gap-5 ${className}`}
     >
-      <div className="form-control">
-        <label>Full name</label>
-        <input
-          required
-          type="text"
-          name="name"
-          placeholder="John Thomas"
-          className={`input w-full`}
-        />
-        {state?.errors?.name && <p className="error">{state?.errors?.name}</p>}
-      </div>
+      <Field
+        label="Full name"
+        id="name"
+        type="text"
+        name="name"
+        placeholder="John Thomas"
+        autoComplete="name"
+        required
+        error={state?.errors?.name}
+      />
 
-      <div className="form-control">
-        <label>Email address</label>
-        <input
-          required
-          type="email"
-          name="email"
-          placeholder="johnthomas@email.com"
-          className={`input w-full`}
-        />
-        {state?.errors?.email && (
-          <p className="error">{state?.errors?.email}</p>
-        )}
-      </div>
-      <div className="form-control">
-        <label>Password</label>
-        <input
-          required
-          type="password"
-          name="password"
-          placeholder="********"
-          className={`input w-full`}
-        />
-        {state?.errors?.password && (
-          <p className="error">{state?.errors?.password}</p>
-        )}
-      </div>
+      <Field
+        label="Email address"
+        id="email"
+        type="email"
+        name="email"
+        placeholder="you@email.com"
+        autoComplete="email"
+        required
+        error={state?.errors?.email}
+      />
+
+      <Field
+        label="Password"
+        id="password"
+        type="password"
+        name="password"
+        placeholder="••••••••"
+        autoComplete="new-password"
+        required
+        error={state?.errors?.password}
+      />
+
       <div>
         {state?.message && (
           <div
@@ -79,8 +75,8 @@ export default function FormSignup({ className }: { className?: string }) {
             {state?.message}
           </div>
         )}
-        <button type="submit" className="button button--accent w-full justify-center my-3" disabled={pending}>
-          {pending ? 'Please wait...' : 'Signup'}
+        <button type="submit" className="btn btn--primary my-3" disabled={pending}>
+          {pending ? 'Please wait…' : 'Sign up'}
         </button>
       </div>
     </form>
