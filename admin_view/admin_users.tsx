@@ -54,7 +54,7 @@ export default function AdminUsers() {
 
   function submitAdd() {
     const result = addStaffUser(form);
-    if (!result.ok) {
+    if (result.ok === false) {
       setFormError(result.error);
       return;
     }
