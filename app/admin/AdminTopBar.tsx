@@ -56,9 +56,9 @@ function NotificationDropdown({ darkMode, onClose }: { darkMode: boolean; onClos
         <div className={`shrink-0 flex flex-nowrap gap-1.5 px-4 py-3 border-b overflow-x-auto ${darkMode ? "border-[rgba(255,255,255,0.10)]" : "border-slate-200"}`}>
           {categories.map((cat) => (
             <button
-                 key={cat}
-                  onClick={() => setActiveCategory(cat)}
-                    className={`shrink-0 flex items-center justify-center min-w-[76px] px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap border transition-colors ${
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`shrink-0 flex items-center justify-center min-w-[76px] px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap border transition-colors ${
                 activeCategory === cat ? "text-white border-transparent" : darkMode ? "text-[#F9FAFB] border-[rgba(255,255,255,0.20)]" : "text-slate-500 border-slate-200"
               }`}
               style={activeCategory === cat ? { background: CATEGORY_COLORS[cat] } : undefined}
@@ -122,10 +122,10 @@ export default function AdminTopBar() {
             setNotifOpen((v) => !v);
             setOpen(false);
           }}
-          className={`relative ${darkMode ? "text-gray-300" : "text-[#5a6b76]"}`}
+          className={`relative flex h-8 w-8 items-center justify-center ${darkMode ? "text-gray-300" : "text-[#5a6b76]"}`}
           title="Notifications"
         >
-          <img src="/icon-notification.png" alt="Notifications" className="h-5 w-5 object-contain" />
+          <img src="/icon-notification.png" alt="Notifications" className="h-7 w-7 object-contain" />
           <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full" />
         </button>
         {notifOpen && <NotificationDropdown darkMode={darkMode} onClose={() => setNotifOpen(false)} />}

@@ -13,9 +13,11 @@ const navItems = [
   { label: "Dashboard", icon: "/dashboard.png", href: "/admin" },
   { label: "Analytics", icon: "/analytics.png", href: "/admin/analytics" },
   { label: "User management", icon: "/user-management.png", href: "/admin/users" },
+  { label: "Patient list", icon: "/icon-patients.png", href: "/admin/patients" },
   { label: "Approval requests", icon: "/approval-request.png", href: "/admin/requests" },
   { label: "Events & services", icon: "/events-services.png", href: "/admin/events" },
   { label: "Appointment schedule", icon: "/appointment-schedule.png", href: "/admin/appointments" },
+  { label: "Queuing", icon: "/icon-calendar.png", href: "/admin/queuing" },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
@@ -43,7 +45,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           </div>
         </div>
 
-        <nav className="flex-1 mt-2">
+        <nav className="flex-1 mt-2 overflow-y-auto">
           <p className="font-poppins text-[13px] font-bold text-gray-400 uppercase tracking-[1px] mb-2 pl-3">Menu</p>
           {navItems.map((item) => {
             const active = pathname === item.href;

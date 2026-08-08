@@ -4,11 +4,10 @@
 import { Search, Plus, ChevronDown, Eye, ShieldCheck, MoreVertical, X } from "lucide-react";
 import { useDarkMode } from "@/app/meditrack/DarkModeContext";
 import { useMemo, useState } from "react";
-import PatientRecordView, { type PatientRecord } from "@/app/admin/PatientRecordView";
+import UserAccountView from "@/app/admin/UserAccountView";
 import { useAdminData, type MedUser, type UserTab } from "@/app/admin/AdminDataContext";
 
 const STAFF_ROLES = ["Nurse", "Midwife", "BHW", "Doctor", "Admin"];
-const PATIENT_ROLES = ["Patient"];
 
 const STATUS_TEXT: Record<string, string> = {
   Active: "text-emerald-500",
@@ -16,36 +15,26 @@ const STATUS_TEXT: Record<string, string> = {
   Pending: "text-amber-500",
 };
 
-// TODO: once you have a real user-record API, fetch full details by email/id
-// instead of deriving a placeholder record from the row's name and role.
-function toPatientRecord(user: MedUser): PatientRecord {
-  const [lastName, rest] = user.name.split(",").map((s) => s.trim());
-  const [givenName, ...middleParts] = (rest ?? user.name).split(" ");
-  return {
-    ptn: `USR-${user.email.length}${user.joined.replace(/-/g, "")}`,
-    lastName: lastName ?? user.name,
-    givenName: givenName ?? "",
-    middleName: middleParts.join(" "),
-    role: user.role,
-    contactNo: "",
-  };
-}
+const TAB_LABEL: Record<UserTab, string> = {
+  staff: "Staff",
+  patient: "User Account",
+};
 
 export default function AdminUsers() {
   const { darkMode } = useDarkMode();
-  const { users, addPendingUser } = useAdminData();
+  const { users, addStaffUser } = useAdminData();
   const [activeTab, setActiveTab] = useState<UserTab>("patient");
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("All Roles");
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
   const [addOpen, setAddOpen] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", role: "", tab: "patient" as UserTab });
+  const [form, setForm] = useState({ name: "", email: "", role: STAFF_ROLES[0] });
   const [formError, setFormError] = useState("");
   const [confirmMsg, setConfirmMsg] = useState("");
   const [viewing, setViewing] = useState<MedUser | null>(null);
 
-  const roleOptions = ["All Roles", ...(activeTab === "staff" ? STAFF_ROLES : PATIENT_ROLES)];
+  const roleOptions = activeTab === "staff" ? ["All Roles", ...STAFF_ROLES] : ["All Roles", "Patient"];
 
   const filtered = useMemo(() => {
     return users.filter((u) => {
@@ -58,19 +47,21 @@ export default function AdminUsers() {
   }, [users, activeTab, roleFilter, search]);
 
   function openAddModal() {
-    setForm({ name: "", email: "", role: activeTab === "staff" ? STAFF_ROLES[0] : PATIENT_ROLES[0], tab: activeTab });
+    setForm({ name: "", email: "", role: STAFF_ROLES[0] });
     setFormError("");
     setAddOpen(true);
   }
 
   function submitAdd() {
-    const result = addPendingUser(form);
+    const result = addStaffUser(form);
     if (!result.ok) {
       setFormError(result.error);
       return;
     }
     setAddOpen(false);
-    setConfirmMsg(`Request sent for ${form.name} — awaiting approval.`);
+    setActiveTab("staff");
+    setRoleFilter("All Roles");
+    setConfirmMsg(`${form.name} was added as a staff member.`);
     setTimeout(() => setConfirmMsg(""), 3000);
   }
 
@@ -85,7 +76,7 @@ export default function AdminUsers() {
 
             <div className="flex items-center gap-2">
               <TabButton
-                label="Staff"
+                label={TAB_LABEL.staff}
                 active={activeTab === "staff"}
                 darkMode={darkMode}
                 onClick={() => {
@@ -94,7 +85,7 @@ export default function AdminUsers() {
                 }}
               />
               <TabButton
-                label="Patient"
+                label={TAB_LABEL.patient}
                 active={activeTab === "patient"}
                 darkMode={darkMode}
                 onClick={() => {
@@ -102,6 +93,44 @@ export default function AdminUsers() {
                   setRoleFilter("All Roles");
                 }}
               />
+            </div>
+          </div>
+        </div>
+
+        {confirmMsg && (
+          <div className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700">
+            {confirmMsg}
+          </div>
+        )}
+
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
+          <div className="flex items-center gap-3">
+            <div className={`relative w-80 rounded-lg border ${darkMode ? "bg-[#2d1b4e] border-[rgba(255,255,255,0.10)]" : "bg-gray-50 border-gray-200"}`}>
+              <input
+                type="text"
+                placeholder="Search by name or email"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className={`w-full bg-transparent border-none outline-none py-3 pl-4 pr-11 text-sm ${darkMode ? "text-[#F9FAFB] placeholder:text-gray-500" : "text-[#2A2E43] placeholder:text-slate-400"}`}
+              />
+              <Search size={18} className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" />
+            </div>
+
+            <div className="relative">
+              <select
+                value={roleFilter}
+                onChange={(e) => setRoleFilter(e.target.value)}
+                className={`appearance-none rounded-lg border py-3 pl-4 pr-9 text-sm font-medium outline-none ${
+                  darkMode
+                    ? "bg-[#2d1b4e] border-[rgba(255,255,255,0.10)] text-[#F9FAFB]"
+                    : "bg-white border-gray-200 text-[#2A2E43]"
+                }`}
+              >
+                {roleOptions.map((role) => (
+                  <option key={role} value={role}>{role}</option>
+                ))}
+              </select>
+              <ChevronDown size={16} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
             </div>
           </div>
 
@@ -112,42 +141,6 @@ export default function AdminUsers() {
             <Plus size={16} />
             Add Users
           </button>
-        </div>
-
-        {confirmMsg && (
-          <div className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700">
-            {confirmMsg} Check <span className="underline">Approval Requests</span> to accept or reject it.
-          </div>
-        )}
-
-        <div className="flex flex-wrap items-center gap-3 mb-5">
-          <div className={`relative flex-1 min-w-[240px] rounded-lg border ${darkMode ? "bg-[#2d1b4e] border-[rgba(255,255,255,0.10)]" : "bg-gray-50 border-gray-200"}`}>
-            <input
-              type="text"
-              placeholder="Search by name or email"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className={`w-full bg-transparent border-none outline-none py-3 pl-4 pr-11 text-sm ${darkMode ? "text-[#F9FAFB] placeholder:text-gray-500" : "text-[#2A2E43] placeholder:text-slate-400"}`}
-            />
-            <Search size={18} className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" />
-          </div>
-
-          <div className="relative">
-            <select
-              value={roleFilter}
-              onChange={(e) => setRoleFilter(e.target.value)}
-              className={`appearance-none rounded-lg border py-3 pl-4 pr-9 text-sm font-medium outline-none ${
-                darkMode
-                  ? "bg-[#2d1b4e] border-[rgba(255,255,255,0.10)] text-[#F9FAFB]"
-                  : "bg-white border-gray-200 text-[#2A2E43]"
-              }`}
-            >
-              {roleOptions.map((role) => (
-                <option key={role} value={role}>{role}</option>
-              ))}
-            </select>
-            <ChevronDown size={16} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
-          </div>
         </div>
 
         <div className={`rounded-2xl border overflow-hidden ${darkMode ? "bg-[rgba(45,27,78,0.65)] border-[rgba(255,255,255,0.10)]" : "bg-white border-[rgba(15,60,95,0.08)]"}`}>
@@ -198,7 +191,7 @@ export default function AdminUsers() {
               {filtered.length === 0 && (
                 <tr>
                   <td colSpan={6} className={`px-5 py-10 text-center text-sm ${darkMode ? "text-gray-500" : "text-slate-400"}`}>
-                    No {activeTab === "staff" ? "staff" : "patients"} match your search.
+                    No {activeTab === "staff" ? "staff" : "user accounts"} match your search.
                   </td>
                 </tr>
               )}
@@ -211,29 +204,15 @@ export default function AdminUsers() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
           <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-bold text-slate-800">Add User</h3>
+              <h3 className="text-lg font-bold text-slate-800">Add Staff User</h3>
               <button onClick={() => setAddOpen(false)} className="text-slate-400">
                 <X size={20} />
               </button>
             </div>
 
             <p className="mb-4 text-xs text-slate-500">
-              This creates a pending request in <span className="font-semibold">Approval Requests</span> — the account is only activated once accepted there.
+              This creates an active staff account immediately. Patient accounts are created through the Approval Requests queue instead.
             </p>
-
-            <div className="mb-3 flex gap-2">
-              {(["staff", "patient"] as UserTab[]).map((t) => (
-                <button
-                  key={t}
-                  onClick={() => setForm((f) => ({ ...f, tab: t, role: t === "staff" ? STAFF_ROLES[0] : PATIENT_ROLES[0] }))}
-                  className={`flex-1 rounded-lg border px-3 py-2 text-sm font-semibold capitalize ${
-                    form.tab === t ? "border-sky-400 bg-sky-50 text-sky-600" : "border-slate-200 text-slate-500"
-                  }`}
-                >
-                  {t}
-                </button>
-              ))}
-            </div>
 
             <label className="mb-1 block text-xs font-semibold text-slate-500">Full Name</label>
             <input
@@ -259,7 +238,7 @@ export default function AdminUsers() {
                 onChange={(e) => setForm({ ...form, role: e.target.value })}
                 className="w-full appearance-none rounded-lg border border-slate-200 bg-gray-50 px-3 py-2 text-sm text-slate-800 outline-none"
               >
-                {(form.tab === "staff" ? STAFF_ROLES : PATIENT_ROLES).map((r) => (
+                {STAFF_ROLES.map((r) => (
                   <option key={r} value={r}>{r}</option>
                 ))}
               </select>
@@ -269,13 +248,13 @@ export default function AdminUsers() {
             {formError && <p className="mb-3 text-xs font-semibold text-red-500">{formError}</p>}
 
             <button onClick={submitAdd} className="w-full rounded-lg bg-sky-500 py-2.5 text-sm font-bold text-white hover:bg-sky-600">
-              Submit for Approval
+              Add Staff User
             </button>
           </div>
         </div>
       )}
 
-      {viewing && <PatientRecordView patient={toPatientRecord(viewing)} onClose={() => setViewing(null)} />}
+      {viewing && <UserAccountView user={viewing} onClose={() => setViewing(null)} />}
     </div>
   );
 }
