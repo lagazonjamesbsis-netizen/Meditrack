@@ -75,7 +75,7 @@ const ResidenceDetails = () => {
       <div className="flex-1 flex flex-col items-center justify-start lg:justify-center px-4 pb-10">
         {/* Back to Sign Up — draft data is preserved */}
         <div className="w-[92%] max-w-md mb-3 flex items-center justify-between">
-          <OnboardingBackButton fallback="/signup" />
+          <OnboardingBackButton href="/signup" />
           <span className="w-9" aria-hidden="true" />
         </div>
 

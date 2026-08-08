@@ -115,7 +115,7 @@ const Verification = () => {
       <div className="flex-1 flex flex-col items-center justify-start lg:justify-center px-4 pb-10">
         {/* Back to Residence Details — review finds mistakes are corrected here */}
         <div className="w-[92%] max-w-md mb-3 flex items-center justify-between">
-          <OnboardingBackButton fallback="/residence-details" />
+          <OnboardingBackButton href="/residence-details" />
           <span className="w-9" aria-hidden="true" />
         </div>
 
