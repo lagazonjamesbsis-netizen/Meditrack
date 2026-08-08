@@ -3,19 +3,23 @@
 
 "use client"
 
-import { useEffect, useState, ReactNode } from "react"
+import { ReactNode, useSyncExternalStore } from "react"
 
-export default function HydrationZustand({ 
-  children 
+const noopSubscribe = () => () => {}
+
+export default function HydrationZustand({
+  children
 }:{
   children: ReactNode
 }) {
 
-  const [ isHydrated, setIsHydrated ] = useState(false)
-
-  useEffect(()=>{
-    setIsHydrated(true)
-  },[])
+  // Server renders false (not hydrated), client flips true after hydration
+  // without triggering a cascading re-render effect.
+  const isHydrated = useSyncExternalStore(
+    noopSubscribe,
+    () => true,
+    () => false
+  )
 
   return <>
     {isHydrated ? children : null}

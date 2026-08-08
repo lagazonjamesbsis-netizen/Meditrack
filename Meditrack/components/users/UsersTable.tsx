@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { createUser, updateUser, softDeleteUser } from '@/lib/actions/user'
+import { createUser, updateUser, updateUserStatus, softDeleteUser } from '@/lib/actions/user'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import {
@@ -11,14 +11,18 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  BadgeCheck,
+  Ban,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import type { ActionResult } from "@/lib/actions/types"
 
-type UserRow = {
+export type UserRow = {
   id: number
   name: string
   email: string
   role: string
+  status: string
   createdAt: Date
 }
 
@@ -70,7 +74,7 @@ export default function UsersTable({
 
   function handleAdd(formData: FormData) {
     startTransition(async () => {
-      const result: any = await createUser(null, formData)
+      const result: ActionResult = await createUser(null, formData)
       if (result.success) {
         closeModal()
         router.refresh()
@@ -87,7 +91,7 @@ export default function UsersTable({
 
   function handleEdit(formData: FormData) {
     startTransition(async () => {
-      const result: any = await updateUser(null, formData)
+      const result: ActionResult = await updateUser(null, formData)
       if (result.success) {
         closeModal()
         router.refresh()
@@ -108,6 +112,22 @@ export default function UsersTable({
         goToPage(page - 1)
       } else {
         router.refresh()
+      }
+    })
+  }
+
+  function handleStatusChange(user: UserRow, status: string) {
+    const formData = new FormData()
+    formData.set('id', String(user.id))
+    formData.set('status', status)
+
+    startTransition(async () => {
+      const result: ActionResult = await updateUserStatus(null, formData)
+      if (result.success) {
+        toast.success(result.message || 'Account status updated')
+        router.refresh()
+      } else {
+        toast.error(result.message || 'Failed to update account status')
       }
     })
   }
@@ -135,6 +155,7 @@ export default function UsersTable({
               <th className="text-left py-2 px-3 font-medium">Name</th>
               <th className="text-left py-2 px-3 font-medium">Email</th>
               <th className="text-left py-2 px-3 font-medium">Role</th>
+              <th className="text-left py-2 px-3 font-medium">Status</th>
               <th className="text-left py-2 px-3 font-medium">Created</th>
               <th className="py-2 px-3"></th>
             </tr>
@@ -153,6 +174,9 @@ export default function UsersTable({
                   <td className="py-2 px-3">
                     <RoleBadge role={user.role} />
                   </td>
+                  <td className="py-2 px-3">
+                    <StatusBadge status={user.status} />
+                  </td>
                   <td className="py-2 px-3 text-foreground/60">
                     {new Date(user.createdAt).toLocaleDateString()}
                   </td>
@@ -161,6 +185,26 @@ export default function UsersTable({
                       <span className="text-sm text-foreground/50 italic">Your account</span>
                     ) : (
                       <div className="flex gap-1 justify-end">
+                        {user.status !== 'APPROVED' && (
+                          <button
+                            className="button button--circle text-emerald-600"
+                            onClick={() => handleStatusChange(user, 'APPROVED')}
+                            title="Approve account"
+                            disabled={isPending}
+                          >
+                            <BadgeCheck size={24} />
+                          </button>
+                        )}
+                        {user.status !== 'REJECTED' && (
+                          <button
+                            className="button button--circle text-red-600"
+                            onClick={() => handleStatusChange(user, 'REJECTED')}
+                            title="Reject account"
+                            disabled={isPending}
+                          >
+                            <Ban size={24} />
+                          </button>
+                        )}
                         <button
                           className="button button--circle"
                           onClick={() => openEdit(user)}
@@ -183,7 +227,7 @@ export default function UsersTable({
             })}
             {users.length === 0 && (
               <tr>
-                <td colSpan={6} className="py-10 text-center text-foreground/40">
+                <td colSpan={7} className="py-10 text-center text-foreground/40">
                   No users found.
                 </td>
               </tr>
@@ -315,6 +359,18 @@ export default function UsersTable({
                 <option value="SUPERADMIN">Superadmin</option>
               </select>
             </div>
+            <div className="form-control">
+              <label>Account Status</label>
+              <select
+                name="status"
+                className="w-full"
+                defaultValue={selectedUser.status}
+              >
+                <option value="PENDING">Pending Approval</option>
+                <option value="APPROVED">Approved</option>
+                <option value="REJECTED">Rejected</option>
+              </select>
+            </div>
             {formMessage && (
               <div className="alert alert--danger">{formMessage}</div>
             )}
@@ -364,6 +420,28 @@ function RoleBadge({ role }: { role: string }) {
       className={`text-xs px-2 py-0.5 rounded font-medium ${styles[role] ?? styles.USER}`}
     >
       {role}
+    </span>
+  )
+}
+
+function StatusBadge({ status }: { status: string }) {
+  const styles: Record<string, string> = {
+    APPROVED: 'bg-emerald-100 text-emerald-700',
+    PENDING: 'bg-amber-100 text-amber-700',
+    REJECTED: 'bg-red-100 text-red-700',
+  }
+  const labels: Record<string, string> = {
+    APPROVED: 'Approved',
+    PENDING: 'Pending',
+    REJECTED: 'Rejected',
+  }
+  return (
+    <span
+      className={`text-xs px-2 py-0.5 rounded font-medium ${
+        styles[status] ?? 'bg-secondary text-foreground'
+      }`}
+    >
+      {labels[status] ?? status}
     </span>
   )
 }

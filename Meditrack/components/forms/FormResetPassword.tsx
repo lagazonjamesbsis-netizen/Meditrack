@@ -1,40 +1,25 @@
 'use client'
 
-import { useEffect, useState, useRef, useActionState } from 'react'
+import { useState, useRef, useActionState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { resetPassword } from '@/lib/actions/util'
 
-export default function FormResetPassword({
-  className,
-}: {
-  className: string
-}) {
+function FormResetPasswordInner({ className }: { className: string }) {
   // Params
   const searchParams = useSearchParams()
 
   // Refs
   const formRef = useRef<HTMLFormElement>(null)
 
-  // State
-  const [email, setEmail] = useState('')
-  const [token, setToken] = useState('')
+  // State — sync the URL query once via lazy initializers (params never change).
+  const [email, setEmail] = useState(() => searchParams.get('email') ?? '')
+  const [token, setToken] = useState(() => searchParams.get('token') ?? '')
 
   const [state, handleSubmit, isPending] = useActionState(resetPassword, {
     success: false,
     message: null,
-    errors: null,
   })
-
-  useEffect(() => {
-    const tokenParam = searchParams.get('token')
-    const emailParam = searchParams.get('email')
-
-    if (tokenParam && emailParam) {
-      setToken(tokenParam)
-      setEmail(emailParam)
-    }
-  }, [searchParams])
 
   //if no token and email return:
   if (!email && !token) {
@@ -69,11 +54,7 @@ export default function FormResetPassword({
         </label>
         <input
           required
-          className={`${
-            !state?.success && state?.errors?.includes('email')
-              ? 'has-errors'
-              : 'border-gray-400 text-gray-400'
-          } auth-input w-full`}
+          className="auth-input w-full border-gray-400 text-gray-400"
           type="email"
           name="email"
           value={email}
@@ -89,22 +70,11 @@ export default function FormResetPassword({
         </span>
         <input
           required
-          className={`${
-            !state?.success && state?.errors?.password
-              ? 'has-errors'
-              : 'border-black'
-          } auth-input w-full`}
+          className="auth-input w-full border-black"
           name="password"
           type="password"
           placeholder="********"
         />
-        {/* Field Alert */}
-        {state?.errors?.password && (
-          <div className="error text-red-500 text-[12px] font-semibold">
-            {' '}
-            {state?.errors?.password}{' '}
-          </div>
-        )}
       </div>
 
       <div className="w-full form-control">
@@ -115,26 +85,15 @@ export default function FormResetPassword({
         </span>
         <input
           required
-          className={`${
-            !state?.success && state?.errors?.confirmpassword
-              ? 'has-errors'
-              : 'border-black'
-          } auth-input w-full`}
+          className="auth-input w-full border-black"
           name="confirmPassword"
           type="password"
           placeholder="********"
         />
-        {/* Field Alert */}
-        {state?.errors?.confirmpassword && (
-          <div className="error text-red-500 text-[12px] font-semibold">
-            {' '}
-            {state?.errors?.confirmpassword}{' '}
-          </div>
-        )}
       </div>
 
       {/* Alert */}
-      {state.message && (
+      {state?.message && (
         <div
           className={`alert ${
             state.success ? 'alert--success' : 'alert--danger'
@@ -157,5 +116,13 @@ export default function FormResetPassword({
         </button>
       </div>
     </form>
+  )
+}
+
+export default function FormResetPassword({ className }: { className: string }) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <FormResetPasswordInner className={className} />
+    </Suspense>
   )
 }

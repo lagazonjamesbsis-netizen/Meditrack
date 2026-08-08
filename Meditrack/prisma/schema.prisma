@@ -18,12 +18,18 @@ model User {
   email                       String               @unique
   image                       String?
   role                        Role                 @default(USER)
+  status                      AccountStatus        @default(PENDING)
   activatedAt                 DateTime?
   createdAt                   DateTime             @default(now())
   loggedInAt                  DateTime?            @default(now())
   deletedAt                   DateTime?
   password                    String?
   updatedAt                   DateTime?            @updatedAt
+  address                     String?
+  barangay                    String?
+  city                        String?
+  province                    String?
+  zipCode                     String?
 
   @@index([email, deletedAt])
 }
@@ -43,4 +49,10 @@ enum Role {
   SUPERADMIN
   ADMIN
   USER
+}
+
+enum AccountStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }

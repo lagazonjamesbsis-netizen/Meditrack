@@ -1,7 +1,6 @@
 'use client'
 
-import { useState, useRef, useActionState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRef, useActionState } from 'react'
 import { forgotPassword } from '@/lib/actions/util'
 
 export default function FormForgotPassword({
@@ -9,9 +8,6 @@ export default function FormForgotPassword({
 }: {
   className: string
 }) {
-  const router = useRouter()
-
-  const { push: redirect } = router
   const formRef = useRef<HTMLFormElement>(null)
 
   const [state, handleSubmit, isPending] = useActionState(forgotPassword, {

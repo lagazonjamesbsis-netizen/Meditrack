@@ -8,11 +8,19 @@ import { UserRoundPen } from 'lucide-react'
 import { Trash } from 'lucide-react'
 import { deleteMedia, uploadMedia } from '@/lib/actions/media'
 
+type ProfileUser = {
+  id: number
+  name: string
+  email: string
+  image?: string | null
+  role?: string
+}
+
 export default function FormProfile({
   m,
   className,
 }: {
-  m: User
+  m: ProfileUser
   className?: string
 }) {
   //
@@ -23,7 +31,7 @@ export default function FormProfile({
 
   // States
   const [pending, setPending] = useState(false)
-  const [me, setMe] = useState<User>(m)
+  const [me, setMe] = useState<ProfileUser>(m)
   const [state, handleSubmit, isPending] = useActionState(updateMe, {
     success: false,
     message: null,
@@ -31,22 +39,21 @@ export default function FormProfile({
   })
 
   //
-  useEffect(() => {
-    setMe(m)
-  }, [])
-
-  //
+  // Mirror the server's authoritative result back into local form state —
+  // this is the intended pattern for action results, not a cascade.
   useEffect(() => {
     if (state.success) {
-      setMe(state.payload)
-      sessionUpdate(state.payload)
+      const updated = state.payload as ProfileUser
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setMe(updated)
+      sessionUpdate(updated)
     } else {
       setPending(false)
     }
   }, [state])
 
   //
-  async function sessionUpdate(updatedUser: User) {
+  async function sessionUpdate(updatedUser: ProfileUser) {
     // NOTE: Important!
     // Merge updated user data with existing session user data
     // *** Just pass the user fields that have changed ***
@@ -70,13 +77,13 @@ export default function FormProfile({
       const upload = await uploadMedia(imageFile)
 
       if (upload?.success) {
-        setMe((prev: User) => ({
+        setMe((prev: ProfileUser) => ({
           ...prev,
           image: upload.payload.url,
         }))
         //
         const update = await updateMe(
-          formRef.current,
+          null,
           (() => {
             const fd = new FormData()
             fd.append('name', me.name)
@@ -108,11 +115,11 @@ export default function FormProfile({
     try {
       // Delete the blob first: deleteMedia verifies the URL is still the
       // user's stored image, so it must run before updateMe nulls it.
-      const deleted = await deleteMedia(formRef.current, formData)
+      const deleted = await deleteMedia(null, formData)
 
       if (deleted.success) {
-        const updated = await updateMe(formRef.current, formData)
-        setMe((prev: User) => ({
+        const updated = await updateMe(null, formData)
+        setMe((prev: ProfileUser) => ({
           ...prev,
           image: null,
         }))
@@ -201,7 +208,7 @@ export default function FormProfile({
                 type="text"
                 name="name"
                 defaultValue={me?.name}
-                className={`!w-full ${state.errors?.name ? 'has-errors' : ''}`}
+className={`!w-full ${state.errors?.email ? 'has-errors' : ''}`}
                 disabled={isPending}
               />
             </div>

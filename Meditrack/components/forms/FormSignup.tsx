@@ -1,8 +1,10 @@
 'use client'
 
-import { useActionState, useEffect, useRef } from 'react'
+import { useActionState, useEffect, useRef, useState } from 'react'
 import { signupUser } from '@/lib/actions/user'
+import { readOnboardingDraft, writeOnboardingDraft } from '@/lib/onboarding'
 import { useRouter } from 'next/navigation'
+import { Eye, EyeOff } from 'lucide-react'
 
 export default function FormSignup({ className }: { className?: string }) {
   // Hooks
@@ -14,12 +16,29 @@ export default function FormSignup({ className }: { className?: string }) {
   // States
   const [state, handleSubmit, pending] = useActionState(signupUser, {})
 
+  // Restore previously saved values when the user steps back from the
+  // Residence Details step — mistakes get corrected, context is kept.
+  const draft = readOnboardingDraft()
+  const [name, setName] = useState(draft.name ?? '')
+  const [email, setEmail] = useState(draft.email ?? '')
+  const [password, setPassword] = useState(draft.password ?? '')
+  const [showPassword, setShowPassword] = useState(false)
+
   useEffect(() => {
     if (state?.success && formRef.current) {
-      formRef.current.reset()
-      // Use delay 1000 to show form message before redirect
+      // Use the controlled state — accurate even if the browser filled the DOM.
+      const nextName = name.trim()
+      const nextEmail = email.trim()
+      const nextPassword = password.trim()
+
+      // Stash the onboarding draft ONLY — the account itself is not created
+      // here. It is persisted after the final Verification step.
+      writeOnboardingDraft({ name: nextName, email: nextEmail, password: nextPassword })
+
+      // Use delay 1000 to show the form message before stepping to the
+      // Residence Details step of the onboarding flow.
       setTimeout(() => {
-        redirect('/login')
+        redirect('/residence-details')
       }, 1000)
     }
   }, [state])
@@ -37,6 +56,8 @@ export default function FormSignup({ className }: { className?: string }) {
           required
           type="text"
           name="name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
           placeholder="John Thomas"
           className={`input w-full`}
         />
@@ -49,6 +70,8 @@ export default function FormSignup({ className }: { className?: string }) {
           required
           type="email"
           name="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           placeholder="johnthomas@email.com"
           className={`input w-full`}
         />
@@ -58,13 +81,25 @@ export default function FormSignup({ className }: { className?: string }) {
       </div>
       <div className="form-control">
         <label>Password</label>
-        <input
-          required
-          type="password"
-          name="password"
-          placeholder="********"
-          className={`input w-full`}
-        />
+        <div className="relative">
+          <input
+            required
+            type={showPassword ? 'text' : 'password'}
+            name="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="********"
+            className={`input w-full pr-10`}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
+          >
+            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+          </button>
+        </div>
         {state?.errors?.password && (
           <p className="error">{state?.errors?.password}</p>
         )}

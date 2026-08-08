@@ -3,6 +3,7 @@
 import { put, del } from '@vercel/blob'
 import prisma from '@/lib/prisma'
 import { requireUser } from '@/lib/actions/guard'
+import type { ActionResult } from '@/lib/actions/types'
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 const MAX_SIZE_BYTES = 2 * 1024 * 1024 // 2mb, matches serverActions.bodySizeLimit
@@ -50,7 +51,7 @@ export async function uploadMedia(image: File) {
 }
 
 // DELETE — only allows deleting the blob currently set as this user's image.
-export async function deleteMedia(_prevState: any, formData: any) {
+export async function deleteMedia(_prevState: ActionResult, formData: FormData) {
   const session = await requireUser()
   if (!session) {
     return { success: false, payload: null, message: 'Not authorized.' }

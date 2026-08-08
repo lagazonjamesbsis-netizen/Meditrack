@@ -8,6 +8,7 @@ import { getServerSession, Session } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
 import { isValidEmail } from '@/lib/helper'
 import { sanitizeUser } from '@/lib/actions/guard'
+import type { ActionResult } from '@/lib/actions/types'
 
 const MIN_PASSWORD_LENGTH = 8
 
@@ -74,7 +75,7 @@ export const getMe = cache(async () => {
 })
 
 // UPDATE ME
-export async function updateMe(_prevState: any, formData: FormData) {
+export async function updateMe(_prevState: ActionResult, formData: FormData) {
   // Session
   const session = await getServerSession(authOptions)
   const id = session?.user?.id as string
@@ -90,7 +91,7 @@ export async function updateMe(_prevState: any, formData: FormData) {
 
   try {
     // Prepare the update data
-    let updateData: Record<string, any> = {
+    const updateData: Record<string, string | Date | null> = {
       updatedAt: updatedAt,
     }
     if (name) updateData.name = name
@@ -109,7 +110,7 @@ export async function updateMe(_prevState: any, formData: FormData) {
     ]
 
     // Validation errors
-    let errors: Record<string, string> = {}
+    const errors: Record<string, string> = {}
     requiredFields.forEach(({ key, label, value }) => {
       if (!value) {
         errors[key] = `${label} is required.`
@@ -181,7 +182,7 @@ export async function updateMe(_prevState: any, formData: FormData) {
 }
 
 // UPDATE ME PASSWORD
-export async function updateMePassword(_prevState: any, formData: FormData) {
+export async function updateMePassword(_prevState: ActionResult, formData: FormData) {
   const session = (await getServerSession(authOptions)) as Session | null
   if (!session || !session.user || !session.user.id) {
     return {
@@ -197,7 +198,7 @@ export async function updateMePassword(_prevState: any, formData: FormData) {
   const new_password = formData.get('new_password')?.toString().trim()
   const confirm_password = formData.get('confirm_password')?.toString().trim()
 
-  let errors: Record<string, string> = {}
+  const errors: Record<string, string> = {}
 
   const requiredFields = [
     { key: 'current_password', label: 'Current Password', value: current_password },

@@ -2,7 +2,6 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   devIndicators: false,
-  // Required to enable the 'use cache' directive and Cache Components (PPR)
   cacheComponents: true,
   experimental: {
     serverActions: {

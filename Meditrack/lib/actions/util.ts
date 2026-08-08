@@ -6,6 +6,7 @@ import { hash } from 'bcrypt'
 import { APP_NAME, APP_BASE_URL } from '@/config/constants'
 import { isValidEmail } from '../helper'
 import { sendMail } from '@/lib/mailer'
+import type { ActionResult } from '@/lib/actions/types'
 
 const table = 'resetPasswordToken'
 const MIN_PASSWORD_LENGTH = 8
@@ -20,7 +21,7 @@ function hashToken(token: string): string {
 }
 
 // FORGOT PASSWORD
-export async function forgotPassword(_prevState: any, formData: FormData) {
+export async function forgotPassword(_prevState: ActionResult, formData: FormData) {
   const email = formData.get('email')?.toString().trim()
 
   if (!email || !isValidEmail(email)) {
@@ -78,7 +79,7 @@ export async function forgotPassword(_prevState: any, formData: FormData) {
 }
 
 // RESET PASSWORD
-export async function resetPassword(_prevState: any, formData: FormData) {
+export async function resetPassword(_prevState: ActionResult, formData: FormData) {
   const token = formData.get('token')?.toString().trim()
   const email = formData.get('email')?.toString().trim()
   const password = formData.get('password')?.toString().trim()

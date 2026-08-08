@@ -1,46 +1,61 @@
 import { Metadata } from 'next'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
-import { getUser } from '@/lib/actions/user'
+import { redirect } from 'next/navigation'
+import { getAccountAccess } from '@/lib/actions/guard'
+import PatientHeader from '@/components/patient/Header'
+import WelcomeCard from '@/components/patient/WelcomeCard'
+import AppointmentCard from '@/components/patient/AppointmentCard'
+import EventCard from '@/components/patient/EventCard'
+import ServicesSection from '@/components/patient/ServicesSection'
+import StaffList from '@/components/patient/StaffList'
+import ApprovalBanner from '@/components/patient/ApprovalBanner'
+import AccountStatusScreen from '@/components/patient/AccountStatusScreen'
+import PatientBottomNavigation from '@/components/patient/PatientBottomNavigation'
 
 export const metadata: Metadata = {
-  title: 'User',
-  description: 'User',
+  title: 'Dashboard',
+  description: 'MediTrack patient dashboard',
 }
 
 export default async function Dashboard() {
   const session = await getServerSession(authOptions)
-  const res = await getUser(session.user.id)
-  const user = res.payload
+  if (!session?.user?.id) redirect('/login')
+
+  // Account approval gate: PENDING users see their status + allowed features;
+  // REJECTED users see the verification-failed screen.
+  const access = await getAccountAccess()
+  if (!access) redirect('/login')
+
+  const isRejected = access.status === 'REJECTED'
 
   return (
-    <section>
-      <div className="">
-        <div className="flex flex-col gap-5 container">
-          <h1>User</h1>
+    <>
+      <section
+        className="min-h-dvh bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/purplebackground.png')" }}
+      >
+        <div className="max-w-md mx-auto pb-32">
+          <PatientHeader />
 
-          {session && (
-            <div>
-              <p>Hello {session.user.name}, you are now logged in.</p>
-              <p></p>
-            </div>
-          )}
-
-          {user && (
-            <div>
-              <p className="font-bold">Your details:</p>
-              <p>ID: {user.id}</p>
-              <p>Name: {user.name}</p>
-              <p>Email: {user.email}</p>
-              <p>CreatedAt: {new Date(user.createdAt).toDateString()}</p>
-              <p>
-                LoggedInAt: {new Date(user.loggedInAt).toDateString()}{' '}
-                {new Date(user.loggedInAt).toTimeString()}
-              </p>
-            </div>
-          )}
+          <main className="px-4 pt-4 flex flex-col gap-5">
+            {isRejected ? (
+              <AccountStatusScreen status={access.status} showSignOut />
+            ) : (
+              <>
+                {!access.approved && <ApprovalBanner />}
+                <WelcomeCard name={session.user.name ?? 'there'} />
+                {access.approved && <AppointmentCard />}
+                <EventCard />
+                {access.approved && <ServicesSection />}
+                <StaffList />
+              </>
+            )}
+          </main>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {!isRejected && <PatientBottomNavigation />}
+    </>
   )
 }

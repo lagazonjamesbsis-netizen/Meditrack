@@ -15,6 +15,7 @@ async function main() {
       email: defaultEmail,
       password: passwordHash,
       role: 'SUPERADMIN', // from your Role enum
+      status: 'APPROVED',
       activatedAt: new Date(),
       createdAt: new Date(),
       updatedAt: new Date(),

@@ -1,9 +1,10 @@
+import { Suspense } from 'react'
 import Link from 'next/link'
 import FormResetPassword from '@/components/forms/FormResetPassword'
 
 export default function ResetPassword() {
   return (
-    <>
+    <Suspense fallback={<div>Loading...</div>}>
       <section className="min-h-dvh h-full flex items-center py-10 px-5">
         <main className="flex flex-col gap-5 items-center justify-center">
           <div className="flex justify-center">
@@ -20,6 +21,6 @@ export default function ResetPassword() {
           </div>
         </main>
       </section>
-    </>
+    </Suspense>
   )
 }

@@ -1,6 +1,6 @@
 import { ReactNode } from "react"
 
-export default async function TemplateBlank({
+export default function TemplateBlank({
   children,
   className
 }: {

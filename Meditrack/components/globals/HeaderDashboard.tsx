@@ -2,7 +2,7 @@ import Link from 'next/link'
 import DrawerProfile from '@/components/globals/DrawerProfile'
 import ButtonDrawer from '@/components/ui/ButtonDrawer'
 
-export default async function HeaderDashboard() {
+export default function HeaderDashboard() {
   return (
     <header className="bg-secondary sticky top-0 z-10">
       <div className="px-5 py-2 h-16 flex items-center justify-between">

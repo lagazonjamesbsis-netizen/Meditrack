@@ -25,7 +25,16 @@ export const authOptions: NextAuthOptions = {
           type: 'password',
         },
       },
-      async authorize(credentials): Promise<any> {
+      async authorize(
+        credentials
+      ): Promise<
+        | {
+            id: string
+            name: string | null
+            email: string | null
+          }
+        | null
+      > {
         if (!credentials?.email || !credentials.password) {
           return null
         }
@@ -56,7 +65,7 @@ export const authOptions: NextAuthOptions = {
             email: credentials.email,
           },
           data: {
-            loggedInAt: new Date().toISOString(),
+            loggedInAt: new Date(),
           },
         })
 
@@ -81,6 +90,7 @@ export const authOptions: NextAuthOptions = {
           token.email = dbUser.email
           token.image = dbUser.image
           token.role = dbUser.role
+          token.status = dbUser.status
         }
       }
 
@@ -97,6 +107,7 @@ export const authOptions: NextAuthOptions = {
           token.email = dbUser.email
           token.image = dbUser.image
           token.role = dbUser.role
+          token.status = dbUser.status
         }
       }
       return token
@@ -108,6 +119,7 @@ export const authOptions: NextAuthOptions = {
       session.user.email = token.email as string
       session.user.image = token.image as string
       session.user.role = token.role as string
+      session.user.status = token.status as string
 
       return session
     },

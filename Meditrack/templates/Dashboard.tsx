@@ -3,7 +3,7 @@ import FooterDashboard from '@/components/globals/FooterDashboard'
 import Aside from '@/components/globals/Aside'
 import Drawer from '@/components/globals/Drawer'
 
-export default async function TemplateDashboard({
+export default function TemplateDashboard({
   children,
 }: {
   children: React.ReactNode
