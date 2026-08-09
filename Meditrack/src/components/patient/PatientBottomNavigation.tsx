@@ -2,20 +2,22 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { CalendarDays, ClipboardList, Home, UserRound } from 'lucide-react'
+import { UserRound } from 'lucide-react'
 
 // All navigation items are always visible — pending-approval users still get
 // full navigation; gated pages (Appointment, Records) render an approval
 // notice for them instead of hiding the tabs.
+// Custom MediTrack PNG assets are the primary icons for Home, Appointment and
+// Records. "You" has no custom asset yet, so it keeps the existing component.
 const items = [
-  { key: 'home', label: 'Home', href: '/dashboard', icon: Home },
+  { key: 'home', label: 'Home', href: '/dashboard', icon: '/home.png' },
   {
     key: 'appointment',
     label: 'Appointment',
     href: '/dashboard/appointment',
-    icon: CalendarDays,
+    icon: '/appointment.png',
   },
-  { key: 'records', label: 'Records', href: '/dashboard/records', icon: ClipboardList },
+  { key: 'records', label: 'Records', href: '/dashboard/records', icon: '/record.png' },
   { key: 'you', label: 'You', href: '/dashboard/profile', icon: UserRound },
 ]
 
@@ -43,7 +45,18 @@ export default function PatientBottomNavigation() {
                 isActive ? 'text-brand' : 'text-muted hover:text-body'
               }`}
             >
-              <item.icon className="w-6 h-6" aria-hidden="true" />
+              {typeof item.icon === 'string' ? (
+                <img
+                  src={item.icon}
+                  alt=""
+                  aria-hidden="true"
+                  className={`w-6 h-6 transition-opacity ${
+                    isActive ? 'opacity-100' : 'opacity-60'
+                  }`}
+                />
+              ) : (
+                <item.icon className="w-6 h-6" aria-hidden="true" />
+              )}
               <span className={`text-[11px] ${isActive ? 'font-bold' : 'font-medium'}`}>
                 {item.label}
               </span>

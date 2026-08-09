@@ -18,6 +18,11 @@ export type OnboardingDraft = {
     province: string
     zipCode: string
   }
+  verification?: {
+    idType: string
+    frontId: string
+    backId: string
+  }
 }
 
 const KEY = 'meditrackOnboarding'
