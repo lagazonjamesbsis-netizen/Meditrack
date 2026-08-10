@@ -2,6 +2,8 @@
 
 @import '../styles/utilities.css';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -9,6 +11,15 @@
   --secondary: #e5e7eb;
   --tertiary: #d1d5db;
   --accent: #000000;
+}
+
+.dark {
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+  --primary: #1e293b;
+  --secondary: #334155;
+  --tertiary: #475569;
+  --accent: #ffffff;
 }
 
 @theme inline {
@@ -20,6 +31,20 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-bebas: var(--font-bebas-neue);
+  --font-asap: var(--font-asap-condensed);
+  --font-poppins: var(--font-poppins);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @layer base {
@@ -53,9 +78,6 @@
     select,
     input[type='date'] {
       @apply appearance-none bg-white;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      appearance: none;
     }
     textarea {
       @apply field-sizing-content;
@@ -70,7 +92,19 @@
   }
 }
 
-[data-sonner-toast] [data-icon] svg {
-  width: 30px;
-  height: 30px;
+[data-sonner-toast] {
+  gap: 16px;
 }
+
+[data-sonner-toast] [data-icon] {
+  margin-right: 8px;
+}
+
+[data-sonner-toast] [data-icon] svg {
+  width: 22px;
+  height: 22px;
+}
+
+
+
+

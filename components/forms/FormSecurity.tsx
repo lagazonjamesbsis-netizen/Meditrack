@@ -1,7 +1,8 @@
 'use client'
 
-import { useRef, useActionState } from 'react'
+import { useEffect, useRef, useActionState } from 'react'
 import { updateMePassword } from '@/lib/actions/me'
+import { useUnsavedChanges } from '@/store/useUnsavedChanges'
 
 export default function FormSecurity({ className }: { className?: string }) {
   const formRef = useRef<HTMLFormElement>(null)
@@ -12,13 +13,36 @@ export default function FormSecurity({ className }: { className?: string }) {
     errors: null,
   })
 
+  const { setDirty } = useUnsavedChanges()
+
+  useEffect(() => {
+    if (state.success) {
+      setDirty(false)
+    }
+  }, [state])
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (useUnsavedChanges.getState().isDirty) {
+        e.preventDefault()
+      }
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [])
+
+  function trackDirty() {
+    setDirty(true)
+  }
+
   return (
     <form
       ref={formRef}
       action={handleSubmit}
-      className={`bg-white p-5 md:p-10 mx-auto flex justify-center ${className}`}
+      className={`bg-background p-5 md:p-10 mx-auto flex justify-center ${className}`}
       noValidate
       data-loading={isPending}
+      onChange={trackDirty}
     >
       <div className="form__content">
         <div className=" flex flex-col gap-5">
@@ -35,7 +59,6 @@ export default function FormSecurity({ className }: { className?: string }) {
                 placeholder="**************"
               />
             </div>
-            {/* Field Alert */}
             {state.errors?.current_password && (
               <div className="error">{state.errors.current_password}</div>
             )}
@@ -54,7 +77,6 @@ export default function FormSecurity({ className }: { className?: string }) {
                 placeholder="**************"
               />
             </div>
-            {/* Field Alert */}
             {state.errors?.new_password && (
               <div className="error">{state.errors.new_password}</div>
             )}
@@ -73,7 +95,6 @@ export default function FormSecurity({ className }: { className?: string }) {
                 placeholder="**************"
               />
             </div>
-            {/* Field Alert */}
             {state.errors?.confirm_password && (
               <div className="error">{state.errors.confirm_password}</div>
             )}

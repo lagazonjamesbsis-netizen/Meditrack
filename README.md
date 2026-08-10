@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # nextcrud
 
 A production-ready **Next.js 16** full-stack CRUD boilerplate. Built for teams who need a solid foundation with authentication, user management, file uploads, and email — all deployed on Vercel with Neon PostgreSQL and Vercel Blob.
@@ -226,3 +227,6 @@ The Vercel Blob storage domain is allowlisted in `next.config.ts` for use with `
 ## For AI Agents
 
 If you're an AI agent working on this codebase, read `AGENTS.md` for the full technical reference — exact import paths, caching gotchas, auth callback internals, and code conventions that are critical for correct code generation.
+=======
+# MediTrack-With-ate-jo-
+>>>>>>> 4b80b214300190f7d733d307f071466a81f5e4c0

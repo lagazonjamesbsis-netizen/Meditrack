@@ -13,17 +13,9 @@ const MIN_PASSWORD_LENGTH = 8
 
 const table = 'user'
 
-// 'use cache' is a Next.js 16 directive that caches an async function's return value
-// across requests (replaces unstable_cache). Key differences from unstable_cache:
-//   - No manual key arrays: the cache key is derived automatically from the function's
-//     location + its arguments, so passing `id` as a parameter is all that's needed.
-//   - cacheTag() registers tags for targeted invalidation via revalidateTag().
-//   - cacheLife() sets the cache lifetime profile ('max' = cache until tag invalidated).
-//   - Runtime APIs (cookies, headers) cannot be used inside 'use cache' — read them
-//     outside and pass as arguments; they become part of the key automatically.
 async function getMeData(id: string) {
   'use cache'
-  cacheTag('me', table, 'cache')
+  cacheTag('me')
   cacheLife('max')
 
   try {
@@ -39,7 +31,7 @@ async function getMeData(id: string) {
     if (!me) {
       return {
         success: true,
-        payload: [],
+        payload: null,
       }
     }
 
@@ -59,7 +51,7 @@ async function getMeData(id: string) {
 }
 
 // GET ME
-export const getMe: User = cache(async () => {
+export const getMe = cache(async () => {
   const session = (await getServerSession(authOptions)) as Session | null
 
   if (!session || !session.user || !session.user.id) {
@@ -74,7 +66,7 @@ export const getMe: User = cache(async () => {
 })
 
 // UPDATE ME
-export async function updateMe(_prevState: User, formData: FormData) {
+export async function updateMe(_prevState: any, formData: FormData) {
   // Session
   const session = await getServerSession(authOptions)
   const id = session?.user?.id as string
@@ -181,7 +173,7 @@ export async function updateMe(_prevState: User, formData: FormData) {
 }
 
 // UPDATE ME PASSWORD
-export async function updateMePassword(_prevState: User, formData: FormData) {
+export async function updateMePassword(_prevState: any, formData: FormData) {
   const session = (await getServerSession(authOptions)) as Session | null
   if (!session || !session.user || !session.user.id) {
     return {

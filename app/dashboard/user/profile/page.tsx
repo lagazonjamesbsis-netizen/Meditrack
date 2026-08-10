@@ -5,14 +5,13 @@ import { getMe } from '@/lib/actions/me'
 export default async function DashboardUserProfilePage() {
   // Me
   const resMe = await getMe()
-  const me = resMe.success ? resMe.payload : null
-
-  !me && redirect('/')
+  if (!resMe.success || !resMe.payload) redirect('/')
+  const me = resMe.payload
 
   return (
     <section className="main flex flex-col">
       {/** Top */}
-      <div className="main__header font-semibold py-3 px-5 border-b bg-gray-100 border-gray-100">
+      <div className="main__header font-semibold py-3 px-5 border-b bg-gray-100 dark:bg-gray-800 border-gray-100 dark:border-gray-700">
         Profile
       </div>
 

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Geist, Geist_Mono, Bebas_Neue, Asap_Condensed, Poppins } from 'next/font/google'
 import HydrationZustand from '@/templates/hydrationZustand'
 import { Providers } from './providers'
 import { Toaster } from 'sonner'
@@ -12,6 +12,24 @@ const geistSans = Geist({
 
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
+  subsets: ['latin'],
+})
+
+const bebasNeue = Bebas_Neue({
+  variable: '--font-bebas-neue',
+  weight: '400',
+  subsets: ['latin'],
+})
+
+const asapCondensed = Asap_Condensed({
+  variable: '--font-asap-condensed',
+  weight: '400',
+  subsets: ['latin'],
+})
+
+const poppins = Poppins({
+  variable: '--font-poppins',
+  weight: ['400', '700'],
   subsets: ['latin'],
 })
 
@@ -29,11 +47,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${bebasNeue.variable} ${asapCondensed.variable} ${poppins.variable} antialiased`}
       >
         <Providers>
           <HydrationZustand>{children}</HydrationZustand>
-          <Toaster richColors position="bottom-right" toastOptions={{ style: { fontSize: '16px' } }} />
+          <Toaster richColors position="top-right" toastOptions={{ style: { fontSize: '16px' } }} />
         </Providers>
       </body>
     </html>

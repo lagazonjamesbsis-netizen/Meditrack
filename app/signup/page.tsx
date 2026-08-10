@@ -25,7 +25,7 @@ export default function Signup() {
               </p>
             </div>
           </div>
-          <div className="flex-1 bg-gray-300 p-5 flex items-center justify-center">
+          <div className="flex-1 bg-gray-300 dark:bg-gray-700 p-5 flex items-center justify-center">
             <div className="max-w-sm">
               Lorem Ipsum is simply dummy text of the printing and typesetting
               industry.
