@@ -50,6 +50,9 @@ export default function FormProfile({
     } else {
       setPending(false)
     }
+    // sessionUpdate is re-created every render; run the refresh exactly once
+    // per action result, so it is deliberately not a dependency.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state])
 
   //
@@ -62,8 +65,6 @@ export default function FormProfile({
       ...updatedUser,
     }
 
-    //
-    console.log('Updating session with new user data:', newUser)
     await update(newUser)
 
     //
@@ -94,9 +95,7 @@ export default function FormProfile({
         )
         sessionUpdate(update.payload)
       }
-    } catch (error) {
-      console.log('error: ', error)
-    } finally {
+    } catch {
       setPending(false)
     }
   }

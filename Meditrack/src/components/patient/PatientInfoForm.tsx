@@ -25,14 +25,16 @@ const rowInputClass =
 function SectionCard({
   title,
   icon: Icon,
+  className = '',
   children,
 }: {
   title: string
   icon: typeof UserRound
+  className?: string
   children: React.ReactNode
 }) {
   return (
-    <div className="bg-card rounded-3xl shadow-card p-5">
+    <div className={`bg-card rounded-3xl shadow-card p-5 ${className}`}>
       <h2 className="text-2xl font-bold text-brand mb-4 inline-flex items-center gap-2.5">
         <span className="w-9 h-9 rounded-xl bg-brand-tint text-brand flex items-center justify-center">
           <Icon className="w-5 h-5" aria-hidden="true" />
@@ -121,8 +123,8 @@ export default function PatientInfoForm() {
   }
 
   return (
-    <form onSubmit={handleSave} className="flex flex-col gap-5">
-      <SectionCard title="Personal Information" icon={UserRound}>
+    <form onSubmit={handleSave} className="flex flex-col gap-5 lg:grid lg:grid-cols-2 lg:items-start lg:gap-6">
+      <SectionCard title="Personal Information" icon={UserRound} className="lg:order-1">
         <div className="space-y-4">
           <Field label="Full Name">
             <input
@@ -156,7 +158,7 @@ export default function PatientInfoForm() {
         </div>
       </SectionCard>
 
-      <SectionCard title="Contact Information" icon={Phone}>
+      <SectionCard title="Contact Information" icon={Phone} className="lg:order-5">
         <div className="space-y-4">
           <Field label="Mobile Number">
             <input
@@ -176,7 +178,7 @@ export default function PatientInfoForm() {
         </div>
       </SectionCard>
 
-      <SectionCard title="Address" icon={MapPin}>
+      <SectionCard title="Address" icon={MapPin} className="lg:order-2">
         <div className="space-y-4">
           <Field label="House No. / Street">
             <input
@@ -211,7 +213,7 @@ export default function PatientInfoForm() {
         </div>
       </SectionCard>
 
-      <SectionCard title="PhilHealth Information" icon={ShieldCheck}>
+      <SectionCard title="PhilHealth Information" icon={ShieldCheck} className="lg:order-4">
         <div className="space-y-4">
           <Field label="PhilHealth No.">
             <input
@@ -237,7 +239,7 @@ export default function PatientInfoForm() {
         </div>
       </SectionCard>
 
-      <SectionCard title="Family Information" icon={Users}>
+      <SectionCard title="Family Information" icon={Users} className="lg:order-3">
         <div className="space-y-3">
           {family.map((member) => (
             <div key={member.id} className="relative bg-surface rounded-2xl p-3">
@@ -282,18 +284,18 @@ export default function PatientInfoForm() {
         </div>
       </SectionCard>
 
-      <div className="bg-card rounded-3xl shadow-card p-5">
-        <div className="flex gap-2.5">
+      <div className="bg-card rounded-3xl shadow-card p-5 lg:order-6 lg:col-span-2 lg:bg-transparent lg:shadow-none lg:rounded-none lg:border-t lg:border-line lg:px-0 lg:pb-0 lg:pt-6">
+        <div className="flex gap-2.5 lg:justify-center">
           <button
             type="button"
             onClick={handleCancel}
-            className="flex-1 bg-card border border-line text-brand hover:bg-brand-tint py-3 rounded-xl font-medium text-sm transition-colors"
+            className="flex-1 bg-card border border-line text-brand hover:bg-brand-tint py-3 rounded-xl font-medium text-sm transition-colors lg:flex-none lg:min-w-44 lg:px-10"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="flex-1 bg-brand hover:bg-brand-dark text-white py-3 rounded-xl font-semibold text-sm transition-colors inline-flex items-center justify-center gap-1.5"
+            className="flex-1 bg-brand hover:bg-brand-dark text-white py-3 rounded-xl font-semibold text-sm transition-colors inline-flex items-center justify-center gap-1.5 lg:flex-none lg:min-w-44 lg:px-10"
           >
             <Check className="w-4 h-4" aria-hidden="true" />
             Save Changes

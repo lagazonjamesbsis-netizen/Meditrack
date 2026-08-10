@@ -84,9 +84,7 @@ export default function FormLogin({ className }: { className?: string }) {
       }
 
       setPending(false)
-    } catch (error) {
-      console.log('error: ', error)
-
+    } catch {
       setState({
         message: 'Failed to login',
         success: false,

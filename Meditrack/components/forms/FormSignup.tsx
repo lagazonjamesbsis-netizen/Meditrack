@@ -41,7 +41,7 @@ export default function FormSignup({ className }: { className?: string }) {
         redirect('/residence-details')
       }, 1000)
     }
-  }, [state])
+  }, [state, name, email, password, redirect])
 
   return (
     <form

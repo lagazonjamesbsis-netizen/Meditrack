@@ -3,12 +3,11 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { UserRound } from 'lucide-react'
+import MediTrackBrand from '@/components/globals/MediTrackBrand'
 
-// All navigation items are always visible — pending-approval users still get
-// full navigation; gated pages (Appointment, Records) render an approval
-// notice for them instead of hiding the tabs.
-// Custom MediTrack PNG assets are the primary icons for Home, Appointment and
-// Records. "You" has no custom asset yet, so it keeps the existing component.
+// Permanent left navigation for desktop (1024px+). Mirrors the mobile bottom
+// navigation items, routes, and icons. Hidden below `lg` — mobile/tablet keep
+// the bottom nav untouched.
 const items = [
   { key: 'home', label: 'Home', href: '/dashboard', icon: '/home.png' },
   {
@@ -21,15 +20,18 @@ const items = [
   { key: 'you', label: 'You', href: '/dashboard/profile', icon: UserRound },
 ]
 
-export default function PatientBottomNavigation() {
+export default function PatientSidebar() {
   const pathname = usePathname()
 
   return (
-    <nav
-      aria-label="Primary"
-      className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur border-t border-line shadow-[0_-4px_20px_rgb(15_88_139/0.06)] dark:shadow-[0_-4px_20px_rgb(0_0_0/0.45)] lg:hidden"
-    >
-      <div className="max-w-md mx-auto grid grid-cols-4 py-2 md:max-w-3xl lg:max-w-5xl xl:max-w-6xl">
+    <aside className="hidden lg:flex fixed inset-y-0 left-0 z-40 w-64 flex-col bg-card border-r border-line shadow-[10px_0_30px_rgb(15_88_139/0.1)] dark:shadow-[10px_0_30px_rgb(0_0_0/0.4)]">
+      <div className="px-5 pt-8 pb-6 border-b border-line bg-gradient-to-b from-surface/60 to-transparent">
+        <div className="scale-[1.12]">
+          <MediTrackBrand compact />
+        </div>
+      </div>
+
+      <nav aria-label="Primary" className="flex-1 px-3 pb-3 pt-5 space-y-1.5 overflow-y-auto">
         {items.map((item) => {
           const isActive =
             item.href === '/dashboard'
@@ -41,8 +43,10 @@ export default function PatientBottomNavigation() {
               key={item.key}
               href={item.href}
               aria-current={isActive ? 'page' : undefined}
-              className={`flex flex-col items-center gap-1 py-1.5 rounded-xl transition-colors ${
-                isActive ? 'text-brand' : 'text-muted hover:text-body'
+              className={`flex items-center gap-3 px-3.5 py-3 rounded-xl transition-colors ${
+                isActive
+                  ? 'bg-brand text-white shadow-md font-bold'
+                  : 'text-body hover:bg-brand-tint hover:text-brand'
               }`}
             >
               {typeof item.icon === 'string' ? (
@@ -51,19 +55,17 @@ export default function PatientBottomNavigation() {
                   alt=""
                   aria-hidden="true"
                   className={`w-6 h-6 transition-opacity ${
-                    isActive ? 'opacity-100' : 'opacity-60'
+                    isActive ? 'opacity-100' : 'opacity-70'
                   }`}
                 />
               ) : (
                 <item.icon className="w-6 h-6" aria-hidden="true" />
               )}
-              <span className={`text-[11px] ${isActive ? 'font-bold' : 'font-medium'}`}>
-                {item.label}
-              </span>
+              <span className="text-sm font-semibold">{item.label}</span>
             </Link>
           )
         })}
-      </div>
-    </nav>
+      </nav>
+    </aside>
   )
 }

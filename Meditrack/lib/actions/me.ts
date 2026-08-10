@@ -35,8 +35,6 @@ async function getMeData(id: string) {
       },
     })
 
-    console.log(`---DB HIT: GET ME with ID: ${id} from database---`)
-
     if (!me) {
       return {
         success: true,

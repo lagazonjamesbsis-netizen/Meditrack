@@ -13,7 +13,7 @@ export default function ServiceListSection() {
     <div className="bg-card rounded-3xl shadow-card p-5">
       <h2 className="text-2xl font-bold text-brand mb-4">Available Healthcare Services</h2>
 
-      <div className="space-y-4">
+      <div className="space-y-4 md:space-y-0 md:grid md:grid-cols-2 md:gap-4 lg:grid-cols-3">
         {services.map((service) => {
           const Icon = serviceIcons[service.icon]
           return (
@@ -26,7 +26,7 @@ export default function ServiceListSection() {
               >
                 <Icon className="w-5 h-5" aria-hidden="true" />
               </div>
-              <h3 className="text-xl font-bold leading-tight text-body">
+              <h3 className="text-xl font-bold leading-tight min-h-[3.125rem] flex items-center text-body">
                 {service.name}
               </h3>
             </div>

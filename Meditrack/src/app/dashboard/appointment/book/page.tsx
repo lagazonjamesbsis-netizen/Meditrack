@@ -3,11 +3,12 @@ import Link from 'next/link'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
 import { redirect } from 'next/navigation'
-import { ArrowLeft, MapPin, UserRound } from 'lucide-react'
+import { ArrowLeft, CalendarDays, Clock, MapPin, UserRound } from 'lucide-react'
 import { getAccountAccess } from '@/lib/actions/guard'
 import PatientHeader from '@/components/patient/Header'
 import AccountStatusScreen from '@/components/patient/AccountStatusScreen'
 import PatientBottomNavigation from '@/components/patient/PatientBottomNavigation'
+import PatientSidebar from '@/components/patient/PatientSidebar'
 import BookingForm from '@/components/patient/BookingForm'
 import { services, serviceIcons } from '@/data/appointment'
 
@@ -36,10 +37,10 @@ export default async function BookingPage({
   return (
     <>
       <section
-        className="min-h-dvh bg-cover bg-center bg-no-repeat"
+        className="min-h-dvh bg-cover bg-center bg-no-repeat lg:ml-64"
         style={{ backgroundImage: "url('/purplebackground.png')" }}
       >
-        <div className="max-w-md mx-auto pb-32">
+        <div className="max-w-md mx-auto pb-32 md:max-w-3xl lg:max-w-5xl xl:max-w-6xl">
           <PatientHeader />
 
           <main className="px-4 pt-4 flex flex-col gap-5">
@@ -57,11 +58,38 @@ export default async function BookingPage({
                   <div className="w-16 h-16 shrink-0 rounded-2xl bg-brand-tint text-brand flex items-center justify-center">
                     <Icon className="w-8 h-8" aria-hidden="true" />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <h2 className="text-3xl font-bold leading-tight text-slate-900">
                       {selected.name}
                     </h2>
-                    <p className="text-sm text-slate-500 mt-1">{selected.schedule}</p>
+                    <p className="text-sm font-semibold text-slate-700 mt-1">
+                      {selected.staffName}
+                    </p>
+                    <p className="text-sm text-slate-500">{selected.role}</p>
+                    <div className="mt-2.5 space-y-1.5 text-sm text-slate-500">
+                      <p className="inline-flex items-center gap-1.5">
+                        <CalendarDays className="w-4 h-4 text-brand shrink-0" aria-hidden="true" />
+                        {selected.schedule}
+                      </p>
+                      <p className="inline-flex items-center gap-1.5">
+                        <Clock className="w-4 h-4 text-brand shrink-0" aria-hidden="true" />
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full ${
+                            selected.available ? 'bg-emerald-500' : 'bg-red-500'
+                          }`}
+                          aria-hidden="true"
+                        />
+                        <span
+                          className={`font-semibold ${
+                            selected.available
+                              ? 'text-emerald-700'
+                              : 'text-red-600'
+                          }`}
+                        >
+                          {selected.slots}
+                        </span>
+                      </p>
+                    </div>
                   </div>
                 </div>
 
@@ -99,7 +127,10 @@ export default async function BookingPage({
       </section>
 
       {access.status !== 'REJECTED' && (
-        <PatientBottomNavigation />
+        <>
+          <PatientSidebar />
+          <PatientBottomNavigation />
+        </>
       )}
     </>
   )

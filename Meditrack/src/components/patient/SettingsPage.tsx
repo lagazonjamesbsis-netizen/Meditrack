@@ -108,23 +108,23 @@ export default function SettingsPage() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-card/95 backdrop-blur border-b border-line px-4 py-3 flex items-center justify-between">
+      <header className="sticky top-0 z-40 bg-card/95 backdrop-blur border-b border-line px-4 py-3 flex items-center justify-between md:justify-center">
         <button
           type="button"
           onClick={goBack}
           aria-label="Go back"
-          className="p-2 -ml-2 rounded-full text-brand hover:bg-brand-tint transition-colors"
+          className="p-2 -ml-2 rounded-full text-brand hover:bg-brand-tint transition-colors md:hidden"
         >
           <ArrowLeft className="w-5 h-5" aria-hidden="true" />
         </button>
 
         <h1 className="text-xl font-bold text-brand">Settings</h1>
 
-        <span className="w-9" aria-hidden="true" />
+        <span className="w-9 md:hidden" aria-hidden="true" />
       </header>
 
-      <main className="px-4 pt-4 flex flex-col gap-5 pb-32">
-        <div className="bg-card rounded-3xl shadow-card overflow-hidden">
+      <main className="px-4 pt-4 flex flex-col gap-5 pb-32 md:grid md:grid-cols-2 md:items-start">
+        <div className="bg-card rounded-3xl shadow-card overflow-hidden md:col-span-2 md:grid md:grid-cols-2 md:gap-5">
           <div className="divide-y divide-line">
             {generalItems.map((item) => (
               <SettingsItem
@@ -137,9 +137,9 @@ export default function SettingsPage() {
             ))}
           </div>
 
-          <div className="h-2.5 bg-surface" aria-hidden="true" />
+          <div className="h-2.5 bg-surface md:hidden" aria-hidden="true" />
 
-          <div className="divide-y divide-line">
+          <div className="divide-y divide-line md:border-l md:border-line">
             {supportItems.map((item) => (
               <SettingsItem
                 key={item.key}
@@ -150,7 +150,7 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        <div className="bg-card rounded-3xl shadow-card overflow-hidden">
+        <div className="bg-card rounded-3xl shadow-card overflow-hidden md:col-span-2 md:w-72 md:mx-auto">
           <SettingsItem
             item={{ key: 'logout', label: 'Logout', icon: LogOut, danger: true }}
             onPress={onLogout}

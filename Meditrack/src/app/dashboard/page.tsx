@@ -12,6 +12,7 @@ import StaffList from '@/components/patient/StaffList'
 import ApprovalBanner from '@/components/patient/ApprovalBanner'
 import AccountStatusScreen from '@/components/patient/AccountStatusScreen'
 import PatientBottomNavigation from '@/components/patient/PatientBottomNavigation'
+import PatientSidebar from '@/components/patient/PatientSidebar'
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -32,30 +33,39 @@ export default async function Dashboard() {
   return (
     <>
       <section
-        className="min-h-dvh bg-cover bg-center bg-no-repeat"
+        className="min-h-dvh bg-cover bg-center bg-no-repeat lg:ml-64"
         style={{ backgroundImage: "url('/purplebackground.png')" }}
       >
-        <div className="max-w-md mx-auto pb-32">
+        <div className="max-w-md mx-auto pb-32 md:max-w-3xl lg:max-w-5xl xl:max-w-6xl">
           <PatientHeader />
 
           <main className="px-4 pt-4 flex flex-col gap-5">
             {isRejected ? (
               <AccountStatusScreen status={access.status} showSignOut />
             ) : (
-              <>
-                {!access.approved && <ApprovalBanner />}
-                <WelcomeCard name={session.user.name ?? 'there'} />
-                {access.approved && <AppointmentCard />}
-                <EventCard />
-                {access.approved && <ServicesSection />}
-                <StaffList />
-              </>
+              <div className="flex flex-col gap-5 md:grid md:grid-cols-2 md:items-start">
+                <div className="flex flex-col gap-5 min-w-0">
+                  {!access.approved && <ApprovalBanner />}
+                  <WelcomeCard name={session.user.name ?? 'there'} />
+                  {access.approved && <AppointmentCard />}
+                  <StaffList />
+                </div>
+                <div className="flex flex-col gap-5 min-w-0">
+                  {access.approved && <ServicesSection />}
+                  <EventCard />
+                </div>
+              </div>
             )}
           </main>
         </div>
       </section>
 
-      {!isRejected && <PatientBottomNavigation />}
+      {!isRejected && (
+        <>
+          <PatientSidebar />
+          <PatientBottomNavigation />
+        </>
+      )}
     </>
   )
 }

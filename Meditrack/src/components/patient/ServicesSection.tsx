@@ -7,9 +7,9 @@ const services = [
   { icon: Stethoscope, title: 'Consultation' },
 ]
 
-export default function ServicesSection() {
+export default function ServicesSection({ className = '' }: { className?: string }) {
   return (
-    <div className="bg-card rounded-3xl shadow-card p-5">
+    <div className={`bg-card rounded-3xl shadow-card p-5 ${className}`}>
       <h2 className="text-2xl font-bold text-brand mb-4">Services</h2>
 
       <div className="grid grid-cols-2 gap-4">

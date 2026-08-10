@@ -1,6 +1,6 @@
-export default function WelcomeCard({ name }: { name: string }) {
+export default function WelcomeCard({ name, className = '' }: { name: string; className?: string }) {
   return (
-    <div className="bg-card rounded-3xl shadow-card p-5">
+    <div className={`bg-card rounded-3xl shadow-card p-5 ${className}`}>
       <h2 className="text-2xl font-bold text-brand">
         Welcome, {name}!
       </h2>

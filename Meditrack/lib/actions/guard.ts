@@ -86,7 +86,8 @@ export function sanitizeUser<T extends { password?: unknown } | null>(
   user: T
 ): T {
   if (!user) return user
-  const { password, ...safe } = user as Record<string, unknown>
+  const safe = { ...(user as Record<string, unknown>) }
+  delete safe.password
   return safe as T
 }
 

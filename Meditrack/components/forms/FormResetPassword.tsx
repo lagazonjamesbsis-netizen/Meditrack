@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useActionState, Suspense } from 'react'
+import { useRef, useActionState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { resetPassword } from '@/lib/actions/util'
@@ -12,9 +12,9 @@ function FormResetPasswordInner({ className }: { className: string }) {
   // Refs
   const formRef = useRef<HTMLFormElement>(null)
 
-  // State — sync the URL query once via lazy initializers (params never change).
-  const [email, setEmail] = useState(() => searchParams.get('email') ?? '')
-  const [token, setToken] = useState(() => searchParams.get('token') ?? '')
+  // State — read the URL query once (params never change).
+  const email = searchParams.get('email') ?? ''
+  const token = searchParams.get('token') ?? ''
 
   const [state, handleSubmit, isPending] = useActionState(resetPassword, {
     success: false,

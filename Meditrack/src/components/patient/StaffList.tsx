@@ -6,9 +6,9 @@ const staff = [
   { name: 'Mrs. Ana Reyes', role: 'Midwife' },
 ]
 
-export default function StaffList() {
+export default function StaffList({ className = '' }: { className?: string }) {
   return (
-    <div className="bg-card rounded-3xl shadow-card p-5">
+    <div className={`bg-card rounded-3xl shadow-card p-5 ${className}`}>
       <h2 className="text-2xl font-bold text-brand mb-4">Health Center Staffs</h2>
 
       <ul className="space-y-3">

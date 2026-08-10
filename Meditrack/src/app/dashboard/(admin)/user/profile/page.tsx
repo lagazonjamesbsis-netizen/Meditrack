@@ -7,7 +7,7 @@ export default async function DashboardUserProfilePage() {
   const resMe = await getMe()
   const me = resMe.success ? resMe.payload : null
 
-  !me && redirect('/')
+  if (!me) redirect('/')
 
   return (
     <section className="main flex flex-col">

@@ -95,9 +95,10 @@ export const authOptions: NextAuthOptions = {
       }
 
       if (user) {
-        const dbUser = await prisma.user.findUnique({
+        const dbUser = await prisma.user.findFirst({
           where: {
             id: +user.id,
+            deletedAt: null,
           },
         })
 

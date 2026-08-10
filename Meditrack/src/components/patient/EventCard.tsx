@@ -43,7 +43,7 @@ const events: Event[] = [
   },
 ]
 
-export default function EventCard() {
+export default function EventCard({ className = '' }: { className?: string }) {
   const [index, setIndex] = useState(0)
   const event = events[index]
 
@@ -52,7 +52,7 @@ export default function EventCard() {
   }
 
   return (
-    <div className="bg-card rounded-3xl shadow-card p-5">
+    <div className={`bg-card rounded-3xl shadow-card p-5 ${className}`}>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold text-brand">Event</h2>
         <div className="flex items-center gap-1">

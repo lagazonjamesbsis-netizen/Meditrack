@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { getAccountAccess } from '@/lib/actions/guard'
 import PatientHeader from '@/components/patient/Header'
 import PatientBottomNavigation from '@/components/patient/PatientBottomNavigation'
+import PatientSidebar from '@/components/patient/PatientSidebar'
 import PatientInfoForm from '@/components/patient/PatientInfoForm'
 
 export const metadata: Metadata = {
@@ -22,10 +23,10 @@ export default async function ProfilePage() {
   return (
     <>
       <section
-        className="min-h-dvh bg-cover bg-center bg-no-repeat"
+        className="min-h-dvh bg-cover bg-center bg-no-repeat lg:ml-64"
         style={{ backgroundImage: "url('/purplebackground.png')" }}
       >
-        <div className="max-w-md mx-auto pb-32">
+        <div className="max-w-md mx-auto pb-32 md:max-w-3xl lg:max-w-5xl xl:max-w-6xl">
           <PatientHeader />
 
           <main className="px-4 pt-4 flex flex-col gap-5">
@@ -53,6 +54,7 @@ export default async function ProfilePage() {
         </div>
       </section>
 
+      <PatientSidebar />
       <PatientBottomNavigation />
     </>
   )

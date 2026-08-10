@@ -268,7 +268,7 @@ export default function BookingForm({ service }: { service: Service }) {
           <Legend color="bg-red-500" label="Unavailable" />
         </div>
 
-        <div className="grid grid-cols-2 gap-2.5">
+        <div className="grid grid-cols-2 gap-2.5 md:grid-cols-3">
           {timeSlots.map((slot) => {
             const isSelected = selectedSlot?.time === slot.time
             const className = isSelected

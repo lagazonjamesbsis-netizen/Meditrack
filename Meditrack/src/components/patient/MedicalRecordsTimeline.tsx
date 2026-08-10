@@ -73,12 +73,12 @@ export default function MedicalRecordsTimeline() {
   }
 
   return (
-    <>
-      <div className="bg-card rounded-3xl shadow-card p-5">
+    <div className="flex flex-col gap-5 md:grid md:grid-cols-[260px_1fr]">
+      <div className="bg-card rounded-3xl shadow-card p-5 md:flex md:flex-col md:sticky md:top-16 md:self-start md:min-h-[25.9375rem]">
         <p className="text-xs font-bold uppercase tracking-wide text-muted mb-3">
           Viewing Records For
         </p>
-        <div className="flex gap-2 overflow-x-auto pb-1">
+        <div className="flex gap-2 overflow-x-auto pb-1 md:flex-col md:gap-0 md:space-y-2 md:overflow-visible md:pb-0">
           {members.map((m) => {
             const isActive = m.id === activeId
             return (
@@ -87,7 +87,7 @@ export default function MedicalRecordsTimeline() {
                 type="button"
                 onClick={() => setActiveId(m.id)}
                 aria-pressed={isActive}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl whitespace-nowrap transition-colors ${
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl whitespace-nowrap transition-colors md:w-full md:whitespace-normal ${
                   isActive
                     ? 'bg-brand text-white shadow-md'
                     : 'bg-surface text-muted hover:bg-brand-tint'
@@ -101,9 +101,18 @@ export default function MedicalRecordsTimeline() {
                   {m.initials}
                 </span>
                 <span className="flex flex-col items-start leading-tight">
-                  <span className="text-sm font-semibold">
-                    {m.id === 'me' ? 'Me' : m.name.split(' ')[0]}
-                  </span>
+                  {m.id === 'me' ? (
+                    <span className="text-sm font-semibold">Me</span>
+                  ) : (
+                    <>
+                      <span className="text-sm font-semibold md:hidden">
+                        {m.name.split(' ')[0]}
+                      </span>
+                      <span className="hidden md:inline text-sm font-semibold">
+                        {m.name}
+                      </span>
+                    </>
+                  )}
                   <span
                     className={`text-[10px] ${
                       isActive ? 'text-white/70' : 'text-muted'
@@ -197,7 +206,7 @@ export default function MedicalRecordsTimeline() {
           <button
             type="button"
             onClick={() => setIsAdding(true)}
-            className="w-full border-2 border-dashed border-line rounded-xl py-2.5 mt-4 text-sm font-medium text-brand hover:bg-brand-tint transition-colors inline-flex items-center justify-center gap-1.5"
+            className="w-full border-2 border-dashed border-line rounded-xl py-2.5 mt-4 text-sm font-medium text-brand hover:bg-brand-tint transition-colors inline-flex items-center justify-center gap-1.5 md:py-5 md:mt-6"
           >
             <Plus className="w-4 h-4" aria-hidden="true" />
             Add Family Member
@@ -285,6 +294,6 @@ export default function MedicalRecordsTimeline() {
           </div>
         )}
       </div>
-    </>
+    </div>
   )
 }
