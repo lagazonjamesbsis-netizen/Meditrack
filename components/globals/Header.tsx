@@ -1,12 +1,13 @@
+'use client'
+
 import Link from 'next/link'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/authOptions'
+import { useSession } from 'next-auth/react'
 import { APP_NAME } from '@/config/constants'
 import DrawerProfile from '@/components/globals/DrawerProfile'
 import ButtonDrawer from '@/components/ui/ButtonDrawer'
 
-export default async function Header() {
-  const session = await getServerSession(authOptions)
+export default function Header() {
+  const { data: session, status } = useSession()
 
   return (
     <header className="bg-secondary sticky top-0 z-10">
@@ -21,7 +22,7 @@ export default async function Header() {
           </div>
 
           <div className="flex items-center gap-5">
-            {session ? (
+            {status === 'loading' ? null : session ? (
               <DrawerProfile />
             ) : (
               <div className="flex items-center gap-3">

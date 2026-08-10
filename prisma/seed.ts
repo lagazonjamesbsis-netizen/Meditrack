@@ -21,7 +21,22 @@ async function main() {
     },
   })
 
+  const midwife = await prisma.user.upsert({
+    where: { email: 'vhernandez@meditrack.com' },
+    update: {},
+    create: {
+      name: 'Vivianne Hernandez',
+      email: 'vhernandez@meditrack.com',
+      password: await bcrypt.hash('midwife123', 10),
+      role: 'USER',
+      activatedAt: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  })
+
   console.log('✅ Seeded admin user:', admin.email)
+  console.log('✅ Seeded midwife user:', midwife.email)
 }
 
 main()

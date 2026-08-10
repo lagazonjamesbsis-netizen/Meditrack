@@ -1,31 +1,21 @@
-import TemplateDefault from '@/templates/Default'
 import { getServerSession } from 'next-auth'
+import { redirect } from 'next/navigation'
+import type { Metadata } from 'next'
 import { authOptions } from '@/lib/authOptions'
-import { APP_NAME } from '@/config/constants'
+import MediTrackShell from '@/components/globals/MediTrackShell'
+import Homepage from '@/components/dashboard/Homepage'
+
+export const metadata: Metadata = {
+  title: 'Homepage | Meditrack',
+}
 
 export default async function Home() {
   const session = await getServerSession(authOptions)
+  if (!session?.user?.id) redirect('/login')
 
   return (
-    <TemplateDefault>
-      <section className="h-full">
-        <div className="container">
-          <div className="flex flex-col items-center justify-center gap-5 py-24 text-center">
-            <h1>{APP_NAME}</h1>
-
-            {session && (
-              <div>Hello {session.user.name}, you are now logged in.</div>
-            )}
-
-            <div>
-              <p>
-                This is a demo project built with Next.js 15, Neon PostgreSQL,
-                Prisma, and Tailwind CSS V4, deployed on Vercel.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-    </TemplateDefault>
+    <MediTrackShell>
+      <Homepage />
+    </MediTrackShell>
   )
 }
