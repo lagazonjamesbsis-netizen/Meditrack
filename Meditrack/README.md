@@ -1,6 +1,6 @@
-# nextcrud
+# MediTrack
 
-A production-ready **Next.js 16** full-stack CRUD boilerplate. Built for teams who need a solid foundation with authentication, user management, file uploads, and email — all deployed on Vercel with Neon PostgreSQL and Vercel Blob.
+MediTrack (PRAMIS — Patient Records and Appointment Management Information System) is a healthcare-focused **Next.js 16** application. It provides patient registration, government ID verification, appointment booking, medical records, and role-based account management — deployed on Vercel with Neon PostgreSQL and Vercel Blob.
 
 ---
 

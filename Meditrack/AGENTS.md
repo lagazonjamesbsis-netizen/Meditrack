@@ -23,7 +23,7 @@ Read this before making any changes. This is the canonical reference for AI agen
 
 ## Project Identity
 
-**nextcrud** — Next.js 16 full-stack CRUD boilerplate.
+**MediTrack (PRAMIS)** — Next.js 16 full-stack healthcare application (patient registration, verification, appointments, medical records).
 Deployed to Vercel. Data on Neon PostgreSQL. Media on Vercel Blob.
 
 Features: JWT auth (Credentials), role-based user management, soft-delete, file uploads, email (password reset), paginated data tables, responsive layout with sidebar/drawer.
