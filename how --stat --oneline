@@ -1,0 +1,46 @@
+[33mcommit ddb7465cf2098f8950f4a1c25d7d405e1fb0cea2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mcatanghal[m[33m, [m[1;31morigin/catanghal[m[33m)[m
+Author: Mark Angelo Catanghal <markangelocatanghal00@gmail.com>
+Date:   Tue Aug 11 06:27:40 2026 +0800
+
+    Add more updates
+
+ Meditrack/components/forms/FormLogin.tsx           |  4 [32m+[m[31m-[m
+ Meditrack/components/forms/FormProfile.tsx         |  9 [32m++[m[31m-[m
+ Meditrack/components/forms/FormResetPassword.tsx   |  8 [32m+[m[31m--[m
+ Meditrack/components/forms/FormSignup.tsx          |  2 [32m+[m[31m-[m
+ Meditrack/lib/actions/guard.ts                     |  3 [32m+[m[31m-[m
+ Meditrack/lib/actions/me.ts                        |  2 [31m-[m
+ Meditrack/lib/authOptions.ts                       |  3 [32m+[m[31m-[m
+ .../app/dashboard/(admin)/user/profile/page.tsx    |  2 [32m+[m[31m-[m
+ .../app/dashboard/(admin)/user/security/page.tsx   |  2 [32m+[m[31m-[m
+ .../src/app/dashboard/appointment/book/page.tsx    | 43 [32m+++++++++++[m[31m--[m
+ Meditrack/src/app/dashboard/appointment/page.tsx   | 10 [32m++[m[31m-[m
+ Meditrack/src/app/dashboard/page.tsx               | 32 [32m++++++[m[31m----[m
+ Meditrack/src/app/dashboard/profile/page.tsx       |  6 [32m+[m[31m-[m
+ Meditrack/src/app/dashboard/records/page.tsx       | 10 [32m++[m[31m-[m
+ Meditrack/src/app/notifications/page.tsx           |  6 [32m+[m[31m-[m
+ Meditrack/src/app/settings/about/page.tsx          |  6 [32m+[m[31m-[m
+ Meditrack/src/app/settings/account/page.tsx        |  6 [32m+[m[31m-[m
+ Meditrack/src/app/settings/contact/page.tsx        |  6 [32m+[m[31m-[m
+ Meditrack/src/app/settings/display/page.tsx        |  6 [32m+[m[31m-[m
+ Meditrack/src/app/settings/feedback/page.tsx       |  6 [32m+[m[31m-[m
+ Meditrack/src/app/settings/help-support/page.tsx   |  6 [32m+[m[31m-[m
+ Meditrack/src/app/settings/notifications/page.tsx  |  6 [32m+[m[31m-[m
+ Meditrack/src/app/settings/page.tsx                |  6 [32m+[m[31m-[m
+ .../src/app/settings/privacy-security/page.tsx     |  6 [32m+[m[31m-[m
+ Meditrack/src/app/settings/terms/page.tsx          |  6 [32m+[m[31m-[m
+ .../src/components/patient/AppointmentCard.tsx     | 18 [32m+++[m[31m---[m
+ .../src/components/patient/ApprovalBanner.tsx      |  4 [32m+[m[31m-[m
+ Meditrack/src/components/patient/BookingForm.tsx   |  2 [32m+[m[31m-[m
+ Meditrack/src/components/patient/EventCard.tsx     |  4 [32m+[m[31m-[m
+ Meditrack/src/components/patient/Header.tsx        | 10 [32m+[m[31m--[m
+ .../components/patient/MedicalRecordsTimeline.tsx  | 27 [32m+++++[m[31m---[m
+ .../components/patient/PatientBottomNavigation.tsx |  4 [32m+[m[31m-[m
+ .../src/components/patient/PatientInfoForm.tsx     | 24 [32m++++[m[31m----[m
+ .../src/components/patient/PatientSidebar.tsx      | 71 [32m++++++++++++++++++++++[m
+ .../src/components/patient/ServiceListSection.tsx  |  4 [32m+[m[31m-[m
+ .../src/components/patient/ServicesSection.tsx     |  4 [32m+[m[31m-[m
+ Meditrack/src/components/patient/SettingsPage.tsx  | 16 [32m++[m[31m---[m
+ Meditrack/src/components/patient/StaffList.tsx     |  4 [32m+[m[31m-[m
+ Meditrack/src/components/patient/WelcomeCard.tsx   |  4 [32m+[m[31m-[m
+ 39 files changed, 276 insertions(+), 122 deletions(-)
