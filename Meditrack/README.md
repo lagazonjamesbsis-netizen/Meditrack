@@ -2,6 +2,8 @@
 
 MediTrack (PRAMIS — Patient Records and Appointment Management Information System) is a healthcare-focused **Next.js 16** application. It provides patient registration, government ID verification, appointment booking, medical records, and role-based account management — deployed on Vercel with Neon PostgreSQL and Vercel Blob.
 
+> **Project root:** the application lives in the `Meditrack/` subdirectory of the repository, **not** at the repo root. Everything below is relative to `Meditrack/`. All commands must be run from `Meditrack/` (or Vercel must be configured with Root Directory = `Meditrack`).
+
 ---
 
 ## Features
@@ -115,29 +117,34 @@ Read queries use `'use cache'` with tags for automatic deduplication and manual 
 ### Directory layout
 
 ```
-app/                        # Next.js App Router
-  api/auth/[...nextauth]/   # NextAuth API handler
-  dashboard/                # Protected pages (users, profile, security)
-  login/                    # Public auth pages
-  signup/
-  forgot-password/
-  reset-password/
+src/
+  app/                      # Next.js App Router
+    api/auth/[...nextauth]/ # NextAuth API handler
+    dashboard/              # Protected pages (users, profile, security)
+    login/                  # Public auth pages
+    signup/
+    forgot-password/
+    reset-password/
+    settings/               # Patient settings pages
+  components/               # patient/, onboarding/, globals/
+  lib/                      # dateUtils, etc.
 
-components/
+components/                 # Shared UI (imported via @/components/...)
   forms/                    # Login, Signup, Profile, Security forms
   globals/                  # Header, Footer, Aside, Drawer
   users/UsersTable.tsx      # Paginated user list
 
 config/constants.ts         # APP_NAME, APP_BASE_URL, SMTP constants, USERS_PER_PAGE
 
-lib/
+lib/                        # @/lib/... (prisma.ts, authOptions.ts, mailer.ts, actions/)
   authOptions.ts            # NextAuth config
   prisma.ts                 # Prisma singleton (Neon adapter)
+  mailer.ts                 # Nodemailer/Brevo SMTP transport
   actions/                  # Server actions (user.ts, me.ts, media.ts, util.ts)
 
 prisma/
   schema.prisma             # Database schema
-  seed.ts                   # Seeds default admin user
+  seed.ts                   # Seeds default admin + midwife
   migrations/               # Migration history
 
 store/                      # Zustand stores (useAside, useDrawer)
@@ -147,34 +154,55 @@ templates/                  # Layout templates (Default, Dashboard, Blank)
 types/                      # Shared TypeScript types
 ```
 
+> **Path resolution:** `@/*` maps to `./src/*` first, then `./*` (see `tsconfig.json`). So `@/lib/prisma` resolves to root `lib/prisma.ts` (there is no `src/lib/prisma`), while components under `src/components/` win over any name collision with root `components/`. Keep this in mind when adding new shared modules.
+
 ---
 
 ## Setup
 
 ### Prerequisites
 
-- **Node.js v22.14.x** (use `nvm`)
-- **Vercel CLI** (`npm i -g vercel`)
-- **Vercel account** (hobby tier is fine)
+- **Node.js v22.14.x** (CI and Vercel are pinned here; v20.9+ works)
+- **A Neon PostgreSQL database** (free tier is fine)
+- **A Vercel account** — only needed for deploy/img-upload (optional for local dev)
+- **vercel CLI** (`npm i -g vercel`) — only needed for `vercel env pull`
+- **npm ≥ 11.16**: installs may block postinstall scripts by default. If you see `allow-scripts` warnings (esbuild / bcrypt / sharp / prisma), run `npm approve-scripts --allow-scripts-pending` once, then re-run `npm install`.
 
 ### Installation
 
+The app root is `Meditrack/`, so from a fresh clone:
+
 ```bash
-git clone https://github.com/reginpv/next-crud-boilerplate.git .
-npm install
-vercel env pull .env.local
-npm run db:push            # Push schema to Neon
-npm run db:seed            # Create default admin account
-npm run dev                # Start dev server on :3000
+git clone https://github.com/lagazonjamesbsis-netizen/Meditrack.git
+cd Meditrack              # ← project root (app subdirectory)
+npm ci                    # or npm install (approve scripts if prompted)
+cp .env.example .env.local   # then fill in real values (see table below)
+npx prisma generate       # REQUIRED — Prisma 7 does not auto-generate the client
 ```
 
-### Default admin credentials
+> Alternative env bootstrap: `vercel env pull .env.local` (if the Vercel project is configured and you have CLI access). Otherwise copy `.env.example` and fill it manually.
+
+### Database setup
+
+```bash
+npm run db:push            # Create/update schema on Neon
+npm run db:seed            # Create default admin + midwife accounts
+npm run dev                # Start dev server on http://localhost:3000
+```
+
+### Default accounts (after seeding)
 
 ```
-email:    admin@domain.com
+email:    admin@domain.com      role: SUPERADMIN
 password: defaultpass
-role:     SUPERADMIN
+
+email:    vhernandez@meditrack.com   role: USER
+password: Midwife@2026
 ```
+
+> **Important:** `next build` also requires the Prisma client to be generated *first*
+> (production command is `prisma generate && next build`). A build run without
+> `prisma generate` fails with `@prisma/client` errors.
 
 ---
 
@@ -183,9 +211,9 @@ role:     SUPERADMIN
 | Command | Purpose |
 |---|---|
 | `npm run dev` | Start dev server (Turbopack) |
-| `npm run build` | Build for production |
+| `npm run build` | Build for production (run `npx prisma generate` first) |
 | `npm run lint` | Run ESLint |
-| `npm run test` | Run Jest tests |
+| `npm run type-check` | Run `tsc --noEmit` |
 | `npm run db:generate` | Regenerate Prisma client |
 | `npm run db:migrate` | Create + apply migration (add `--name <name>`) |
 | `npm run db:push` | Push schema without migration (dev only) |
@@ -196,28 +224,65 @@ role:     SUPERADMIN
 
 ---
 
+## Verification (defense readiness)
+
+```bash
+npm ci                 # install
+npx prisma generate    # generate Prisma client
+npm run build          # production build
+npm run lint           # ESLint (0 errors; only no-img-element warnings)
+npm run type-check     # tsc --noEmit
+npm run dev            # dev server on :3000
+```
+
+All of the above pass on a clean clone **without any Vercel involvement**.
+
+---
+
 ## Environment Variables
 
-All loaded from `.env.local` (pulled via `vercel env pull`):
+Loaded from `.env.local` (never committed). Copy `.env.example` → `.env.local` and fill values, or use `vercel env pull .env.local`.
 
-| Variable | Purpose |
-|---|---|
-| `DATABASE_URL` | Pooled Neon connection (runtime) |
-| `DATABASE_URL_UNPOOLED` | Direct Neon connection (migrations) |
-| `NEXTAUTH_SECRET` | JWT signing key |
-| `NEXTAUTH_URL` | Base URL for auth callbacks |
-| `BLOB_READ_WRITE_TOKEN` | Vercel Blob API token |
-| `SMTP_HOST` | Brevo SMTP host |
-| `SMTP_KEY` | Brevo SMTP API key |
+Legend: **[DEV]** needed locally · **[BUILD]** needed for `prisma generate` + `next build` · **[DEPLOY]** needed on Vercel.
+
+| Variable | Purpose | Dev | Build | Deploy |
+|---|---|---|---|---|
+| `DATABASE_URL` | Pooled Neon connection (runtime, `lib/prisma.ts`, seed) | ✅ | ✅ | ✅ |
+| `DATABASE_URL_UNPOOLED` | Direct Neon connection (Prisma CLI via `prisma.config.ts`) | ✅ | ✅ | ✅ |
+| `NEXTAUTH_SECRET` | JWT signing key (`lib/authOptions.ts`) | ✅ | ✅ | ✅ |
+| `NEXTAUTH_URL` | Base URL for auth callbacks — dev `http://localhost:3000`, prod `https://meditrack.vercel.app` | ✅ | ✅ | ✅ |
+| `BLOB_READ_WRITE_TOKEN` | Vercel Blob API token (`lib/actions/media.ts`) | ✅ | – | ✅ |
+| `SMTP_HOST` | Brevo SMTP host (`lib/mailer.ts`) | ✅ | – | ✅ |
+| `SMTP_USER` | Brevo SMTP login email (`lib/mailer.ts`) | ✅ | – | ✅ |
+| `SMTP_KEY` | Brevo SMTP API key (`lib/mailer.ts`) | ✅ | – | ✅ |
+
+**Notes**
+- `BLOB_STORE_ID`, `BLOB_WEBHOOK_PUBLIC_KEY`, `PG*/POSTGRES_*/NEON_*/VITE_NEON_AUTH_URL`, `VERCEL_OIDC_TOKEN` also appear in `.env.local` pulls but are **not read by application code** — optional/tooling only.
+- Missing `SMTP_USER` (or any SMTP var) degrades gracefully: password-reset emails fail silently, the rest of the app works.
+- Missing `DATABASE_URL_UNPOOLED` breaks `prisma generate`/`migrate`/`seed` (Prisma CLI aborts), which in turn breaks the build.
 
 ---
 
 ## Deployment (Vercel)
 
-1. Connect the repo to Vercel
-2. Set **build command** to: `prisma generate && next build`
-3. Add all environment variables in Vercel dashboard
-4. Deploy
+The app root is the `Meditrack/` subdirectory. Vercel project settings that must match:
+
+| Setting | Value |
+|---|---|
+| **Root Directory** | `Meditrack` ← the critical one |
+| **Framework** | Next.js |
+| **Build Command** | `prisma generate && next build` |
+| **Install Command** | `npm install` |
+| **Output Directory** | `.next` (Next.js default) |
+| **Node.js Version** | `22.14.x` (or `22.x`) |
+| **Environment Variables** | all 8 from the table above |
+
+1. In Vercel → Project → Settings → General → set **Root Directory** to `Meditrack`
+2. Under Settings, set the **Build Command** shown above
+3. Add all environment variables (Production + Preview) in Settings → Environment Variables
+4. Redeploy
+
+> **Why:** the repository is structured as `Meditrack/` (app) inside the repo root. If Root Directory stays `/`, Vercel finds no `package.json` and the deploy fails instantly — while GitHub CI passes because it runs with `working-directory: Meditrack`.
 
 The Vercel Blob storage domain is allowlisted in `next.config.ts` for use with `<Image>`.
 
