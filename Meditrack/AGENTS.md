@@ -13,7 +13,7 @@ Read this before making any changes. This is the canonical reference for AI agen
 - **Two caching mechanisms** — do not confuse them:
   - `'use cache'` (persistent, tag-based) for list/detail reads
   - `react cache()` (per-request dedup) for `getMe()`
-- **`@/` maps to repo root**, not `src/`.
+- **`@/*` maps `./src/*` first, then `./*`** — `@/lib/...` resolves to the root `lib/` tree (e.g. `@/lib/prisma`); anything duplicated under `src/` (components) wins over its root sibling.
 - **Tailwind 4 has no config file.** Classes resolved via PostCSS.
 - **Session update needs `update()` call on client** after `updateMe` mutation.
 - **Password hashing:** 12 rounds in all server actions, 10 rounds in seed.
@@ -54,8 +54,14 @@ Features: JWT auth (Credentials), role-based user management, soft-delete, file 
 
 ## Repository Layout
 
+> **Path resolution note:** the App Router lives in `src/app/` (standard src
+> layout). `@/*` is defined as `["./src/*", "./*"]` in `tsconfig.json` — it
+> resolves `./src/*` first, then falls back to `./*`. So `@/lib/prisma` hits
+> root `lib/prisma.ts`, while anything duplicated under `src/` wins over the
+> root sibling. `app/` below refers to `src/app/` unless stated otherwise.
+
 ```
-app/
+app/                       # src/app — Next.js App Router
   api/auth/[...nextauth]/route.ts   # NextAuth handler (GET + POST)
   dashboard/                         # Protected — requires session
     layout.tsx                       # Uses Dashboard template
@@ -66,6 +72,10 @@ app/
       security/page.tsx              # Change own password
   login/                             # Public auth pages
   signup/
+
+  settings/                          # Patient settings pages
+  identification/                    # Patient verification flow
+  verification/ residence-details/ done/  # Onboarding flow (src/components/onboarding)
   forgot-password/
   reset-password/
   layout.tsx                         # Root layout (fonts, Sonner, Providers, HydrationZustand)
@@ -389,17 +399,24 @@ await prisma.user.findMany({
 
 ## Environment Variables
 
-All from `.env.local` (pulled via `vercel env pull .env.local`).
+All from `.env.local` (pulled via `vercel env pull .env.local`, or copy
+`.env.example` → `.env.local` and fill manually — see `.env.example` for a
+dev/build/deploy legend).
 
 | Variable | Purpose |
 |---|---|
-| `DATABASE_URL` | Pooled Neon — Prisma runtime |
-| `DATABASE_URL_UNPOOLED` | Direct Neon — Prisma CLI migrations |
+| `DATABASE_URL` | Pooled Neon — Prisma runtime (`lib/prisma.ts`) |
+| `DATABASE_URL_UNPOOLED` | Direct Neon — Prisma CLI (`prisma.config.ts`); REQUIRED for `prisma generate`/migrate/seed/build |
 | `NEXTAUTH_SECRET` | JWT signing key |
-| `NEXTAUTH_URL` | Base URL for auth callbacks |
+| `NEXTAUTH_URL` | Base URL for auth callbacks (`http://localhost:3000` dev, `https://meditrack.vercel.app` prod) |
 | `BLOB_READ_WRITE_TOKEN` | Vercel Blob API token |
-| `SMTP_HOST` | Brevo SMTP host |
-| `SMTP_KEY` | Brevo SMTP API key |
+| `SMTP_HOST` | Brevo SMTP host (`lib/mailer.ts`) |
+| `SMTP_USER` | Brevo SMTP login email (`lib/mailer.ts`) |
+| `SMTP_KEY` | Brevo SMTP API key (`lib/mailer.ts`) |
+
+The `BLOB_STORE_ID`, `BLOB_WEBHOOK_PUBLIC_KEY`, `NEON_*`, `PG*`, `POSTGRES_*`,
+`VITE_NEON_AUTH_URL`, and `VERCEL_OIDC_TOKEN` vars that appear in dashboard
+pulls are NOT read by application code — tooling only.
 
 Derived constants in `config/constants.ts`: `APP_NAME`, `APP_BASE_URL`, `SMTP_FROM_NAME`, `SMTP_FROM_EMAIL`, `USERS_PER_PAGE`.
 
@@ -419,10 +436,22 @@ Run `npm run db:seed`. The seed script uses `new PrismaClient()` directly (not t
 
 ## Build & Deployment
 
+The app root is the `Meditrack/` subdirectory — NOT the repo root. Run every
+command from `Meditrack/`. CI (`.github/workflows/*`), which uses
+`working-directory: Meditrack`, is the canonical local build baseline.
+
+- **Vercel Root Directory:** MUST be `Meditrack`. If it is `/`, Vercel finds no
+  `package.json` and the deploy fails while GitHub CI still passes (CI changes
+  directory itself). This has been the cause of all recent Vercel failures.
 - **Build command (Vercel):** `prisma generate && next build`
+- **Local build baseline:** `npm ci` → `npx prisma generate` → `npm run build`
+  (also `npm run lint` / `npm run type-check`) — works with no Vercel access.
 - **Dev:** `npm run dev` (Turbopack)
 - **Server Actions body limit:** 2 MB (`next.config.ts`)
 - **Node.js:** 22.14.x required
+- **npm ≥ 11.16:** blocks postinstall scripts by default (`allow-scripts`
+  warnings for esbuild/bcrypt/sharp/prisma). Run `npm approve-scripts
+  --allow-scripts-pending` once after `npm ci` on such toolsets.
 
 ---
 
@@ -431,7 +460,7 @@ Run `npm run db:seed`. The seed script uses `new PrismaClient()` directly (not t
 1. **Soft deletes are mandatory.** Every Prisma `User` query needs `where: { deletedAt: null }`. This is the most common mistake.
 2. **next-auth v4 only.** Do NOT use v5/Auth.js APIs. `authOptions` is imported from `@/lib/authOptions`, not auto-discovered.
 3. **Tailwind 4 has no config file.** No `tailwind.config.js/ts`.
-4. **`@/` resolves to repo root.** Imports: `@/lib/...`, `@/components/...`, not `@/src/...`.
+4. **`@/` resolves `./src/*` then `./*`.** Imports: `@/lib/...`, `@/components/...` hit the root trees unless a `src/` sibling exists (e.g. `src/components/patient/...` wins over `components/...`). Do not add `@/src/...`.
 5. **Session update requires `update()` call on client** after `updateMe` — JWT is not auto-refreshed.
 6. **`react cache()` vs `'use cache'`:** `getMe()` uses `react cache()` (request-level). List/detail queries use `'use cache'` (persistent, tag-based). Do not confuse.
 7. **Prisma singleton** at `@/lib/prisma.ts` — never instantiate `PrismaClient` directly in components or actions.
