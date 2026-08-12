@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
+    "type-check": "tsc --noEmit",
     "db:generate": "dotenv -e .env.local -- npx prisma generate",
     "db:migrate": "dotenv -e .env.local -- npx prisma migrate dev --name",
     "db:push": "dotenv -e .env.local -- npx prisma db push",

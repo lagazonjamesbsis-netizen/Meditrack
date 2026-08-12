@@ -1,0 +1,30 @@
+name: Build
+
+on:
+  push:
+    branches: [catanghal, main, yamo]
+  pull_request:
+
+jobs:
+  build:
+    name: Production Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Meditrack
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.14.x
+          cache: npm
+          cache-dependency-path: Meditrack/package-lock.json
+
+      - run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Build
+        run: npm run build

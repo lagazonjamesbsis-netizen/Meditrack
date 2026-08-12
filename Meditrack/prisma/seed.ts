@@ -1,7 +1,9 @@
 import { PrismaClient } from '@prisma/client'
+import { PrismaNeon } from '@prisma/adapter-neon'
 import bcrypt from 'bcrypt'
 
-const prisma = new PrismaClient()
+const adapter = new PrismaNeon({ connectionString: process.env.DATABASE_URL! })
+const prisma = new PrismaClient({ adapter })
 
 async function main() {
   const defaultEmail = 'admin@domain.com'
@@ -23,6 +25,25 @@ async function main() {
   })
 
   console.log('✅ Seeded admin user:', admin.email)
+
+  const midwifeEmail = 'vhernandez@meditrack.com'
+  const midwifeHash = await bcrypt.hash('Midwife@2026', 10)
+
+  const midwife = await prisma.user.upsert({
+    where: { email: midwifeEmail },
+    update: {},
+    create: {
+      name: 'Vivianne Hernandez',
+      email: midwifeEmail,
+      password: midwifeHash,
+      role: 'USER',
+      activatedAt: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  })
+
+  console.log('✅ Seeded midwife user:', midwife.email)
 }
 
 main()

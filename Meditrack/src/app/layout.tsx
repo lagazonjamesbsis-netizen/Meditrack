@@ -1,10 +1,16 @@
 import type { Metadata } from 'next'
-import { Bebas_Neue, Asap_Condensed, Geist, Geist_Mono } from 'next/font/google'
+import { Bebas_Neue, Asap_Condensed, Geist, Geist_Mono, Inter, Poppins, Roboto } from 'next/font/google'
 import HydrationZustand from '@/templates/hydrationZustand'
 import { Providers } from './providers'
 import { Toaster } from 'sonner'
 import ThemeApplier from '@/components/globals/ThemeApplier'
 import './globals.css'
+
+const inter = Inter({
+  variable: '--font-inter',
+  subsets: ['latin'],
+  weight: ['400', '700'],
+})
 
 const bebas = Bebas_Neue({
   variable: '--font-bebas-neue',
@@ -22,6 +28,18 @@ const asap = Asap_Condensed({
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
+})
+
+const poppins = Poppins({
+  variable: '--font-poppins',
+  subsets: ['latin'],
+  weight: ['400', '700'],
+})
+
+const roboto = Roboto({
+  variable: '--font-roboto',
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
 })
 
 const geistMono = Geist_Mono({
@@ -49,7 +67,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body  className={`${bebas.variable} ${asap.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body  className={`${inter.variable} ${bebas.variable} ${asap.variable} ${geistSans.variable} ${geistMono.variable} ${poppins.variable} ${roboto.variable} antialiased`}>
         <Providers>
           <HydrationZustand>{children}</HydrationZustand>
           <ThemeApplier />

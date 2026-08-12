@@ -3,8 +3,8 @@ import { ReactNode } from 'react'
 import TemplateBlank from '@/templates/Blank'
 
 export const metadata: Metadata = {
-  title: 'Meditrack | Sign Up',
-  description: 'Sign Up',
+  title: 'Identification',
+  description: 'Identification',
 }
 
 export default function BlankLayout({ children }: { children: ReactNode }) {
