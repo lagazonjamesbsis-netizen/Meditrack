@@ -6,7 +6,7 @@ import MediTrackShell from '@/components/globals/MediTrackShell'
 import Homepage from '@/components/dashboard/Homepage'
 
 export const metadata: Metadata = {
-  title: 'Homepage | Meditrack',
+  title: 'Dashboard | Meditrack',
 }
 
 export default async function Home() {

@@ -1,42 +1,45 @@
 import { PrismaClient } from '@prisma/client'
+import { PrismaNeon } from '@prisma/adapter-neon'
 import bcrypt from 'bcrypt'
 
-const prisma = new PrismaClient()
+const adapter = new PrismaNeon({
+  connectionString: process.env.DATABASE_URL ?? process.env.DATABASE_URL_UNPOOLED!,
+})
+const prisma = new PrismaClient({ adapter })
 
 async function main() {
-  const defaultEmail = 'admin@domain.com'
-  const passwordHash = await bcrypt.hash('defaultpass', 10)
-
-  const admin = await prisma.user.upsert({
-    where: { email: defaultEmail },
-    update: {},
-    create: {
-      name: 'Admin User',
-      email: defaultEmail,
-      password: passwordHash,
-      role: 'SUPERADMIN', // from your Role enum
-      activatedAt: new Date(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
+  await prisma.user.deleteMany({
+    where: { email: 'admin@domain.com' },
   })
 
-  const midwife = await prisma.user.upsert({
+  const admin = await prisma.user.upsert({
     where: { email: 'vhernandez@meditrack.com' },
-    update: {},
+    update: {
+      name: 'Vivianne Hernandez',
+      email: 'vhernandez@meditrack.com',
+      password: await bcrypt.hash('midwife123', 10),
+      role: 'ADMIN',
+      position: 'MIDWIFE',
+      status: 'APPROVED',
+      activatedAt: new Date(),
+    },
     create: {
       name: 'Vivianne Hernandez',
       email: 'vhernandez@meditrack.com',
       password: await bcrypt.hash('midwife123', 10),
-      role: 'USER',
+      role: 'ADMIN',
+      position: 'MIDWIFE',
+      status: 'APPROVED',
       activatedAt: new Date(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
     },
   })
 
-  console.log('✅ Seeded admin user:', admin.email)
-  console.log('✅ Seeded midwife user:', midwife.email)
+  // Ensure Elaine (nurse) is removed from the database
+  await prisma.user.deleteMany({ where: { email: 'elaine.nurse@meditrack.com' } })
+
+  console.log('✅ Seeded admin user:', admin.email, '(ADMIN)')
+  console.log('✅ Ensured nurse user elaine.nurse@meditrack.com is removed')
+  console.log('✅ Removed super admin: admin@domain.com')
 }
 
 main()

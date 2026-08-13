@@ -2,9 +2,9 @@ import { Metadata } from 'next'
 import { ReactNode } from 'react'
 
 export const metadata: Metadata = {
-  title: 'Queueing | Meditrack',
+  title: 'Approval Request | Meditrack',
 }
 
-export default function PatientRecordLayout({ children }: { children: ReactNode }) {
+export default function ApprovalRequestLayout({ children }: { children: ReactNode }) {
   return <>{children}</>
 }

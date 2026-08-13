@@ -6,7 +6,7 @@ import { authOptions } from '@/lib/authOptions'
 import MediTrackShell from '@/components/globals/MediTrackShell'
 
 export const metadata: Metadata = {
-  title: 'Dashboard',
+  title: 'Dashboard | Meditrack',
   description: 'Dashboard',
 }
 

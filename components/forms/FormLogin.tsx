@@ -70,7 +70,11 @@ export default function FormLogin({ className }: { className?: string }) {
         // Wait 1 second before redirecting
         setTimeout(() => {
           const MIDWIFE_EMAIL = 'vhernandez@meditrack.com'
-          redirect(email.toLowerCase() === MIDWIFE_EMAIL ? '/' : '/dashboard')
+          const ELAINE_EMAIL = 'elaine.nurse@meditrack.com'
+          const lower = email.toLowerCase()
+          // If Elaine logs in, open the User Management page filtered to Medical Staff
+          const target = lower === MIDWIFE_EMAIL ? '/' : (lower === ELAINE_EMAIL ? '/dashboard/usermanagement?type=Medical%20Staff' : '/dashboard')
+          redirect(target)
         }, 1000)
 
         //

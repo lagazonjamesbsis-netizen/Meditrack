@@ -18,6 +18,13 @@ model User {
   email                       String               @unique
   image                       String?
   role                        Role                 @default(USER)
+  position                    StaffPosition?
+  status                      AccountStatus        @default(PENDING)
+  address                     String?
+  barangay                    String?
+  city                        String?
+  province                    String?
+  zipCode                     String?
   activatedAt                 DateTime?
   createdAt                   DateTime             @default(now())
   loggedInAt                  DateTime?            @default(now())
@@ -43,4 +50,16 @@ enum Role {
   SUPERADMIN
   ADMIN
   USER
+}
+
+enum StaffPosition {
+  NURSE
+  MIDWIFE
+  BHW
+}
+
+enum AccountStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }

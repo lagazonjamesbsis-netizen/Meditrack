@@ -6,14 +6,41 @@ import { usePathname, useRouter } from 'next/navigation'
 import { signOut } from 'next-auth/react'
 import { useDarkMode, DarkModeProvider } from './DarkModeContext'
 import { ProfilePhotoProvider, useProfilePhoto } from './ProfilePhotoContext'
-import { addDays } from '@/src/lib/dateUtils'
 
 const navItems = [
-  { href: '/', label: 'Homepage', icon: '/icon-home.png' },
-  { href: '/dashboard/appointmentmanagement', label: 'Appointment Management', icon: '/icon-calendar.png' },
-  { href: '/dashboard/events', label: 'Events', icon: '/icon-events.png' },
-  { href: '/dashboard/services', label: 'Services', icon: '/icon-services.png' },
-  { href: '/dashboard/patientrecord', label: 'Patient Record', icon: '/icon-patients.png' },
+  { href: '/', label: 'Dashboard', icon: '/icon-home.png' },
+  { href: '/dashboard/appointmentmanagement', label: 'Analytics', icon: '/icon-calendar.png' },
+  { href: '/dashboard/usermanagement', label: 'User Management', icon: '/icon-events.png' },
+  { href: '/dashboard/services', label: 'Patient Lists', icon: '/icon-services.png' },
+  { href: '/dashboard/approvalrequest', label: 'Approval Request', icon: '/icon-patients.png' },
+  { href: '/dashboard/events', label: 'Events and Services', icon: '/icon-events.png' },
+  { href: '/dashboard/appointmentschedule', label: 'Appointment Schedule', icon: '/icon-calendar.png' },
+  { href: '/dashboard/patientrecord', label: 'Queueing', icon: '/icon-patients.png' },
+]
+
+const notificationCategories = [
+  { id: 'Approval Request', color: '#F59E0B' },
+  { id: 'Appointment', color: '#4CAF50' },
+  { id: 'Events', color: '#9C27B0' },
+]
+
+type AdminNotification = {
+  id: number
+  category: string
+  title: string
+  description: string
+  time: string
+  unread: boolean
+}
+
+const adminNotifications: AdminNotification[] = [
+  { id: 1, category: 'Approval Request', title: 'New Approval Request', description: 'Carlo Bautista (Nurse) applied for a Medical Staff account and is waiting for your review.', time: '2 min ago', unread: true },
+  { id: 2, category: 'Approval Request', title: 'Valid ID Pending Validation', description: "Sofia Aquino's submitted valid ID needs to be checked before approval.", time: '15 min ago', unread: true },
+  { id: 3, category: 'Approval Request', title: 'Approval Granted', description: "Ramon Dela Cruz's account has been approved and can now log in.", time: '1 hr ago', unread: true },
+  { id: 4, category: 'Appointment', title: 'New Appointment Booked', description: 'Juan Dela Cruz booked an appointment for the health center. Confirm the schedule.', time: '2 hr ago', unread: true },
+  { id: 5, category: 'Approval Request', title: 'Request Rejected', description: "Pedro Gonzales' BHW application was rejected due to an invalid ID.", time: '3 hr ago', unread: false },
+  { id: 6, category: 'Events', title: 'New Event Created', description: 'A new health event has been scheduled. Review before publishing.', time: '4 hr ago', unread: false },
+  { id: 7, category: 'Appointment', title: 'Appointment Completed', description: "Check-up for Jose Rizal has been marked as completed and archived.", time: '1 day ago', unread: false },
 ]
 
 export default function MediTrackShell({ children }: { children: React.ReactNode }) {
@@ -71,7 +98,11 @@ function LayoutInner({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-3 text-[18px] text-[#5a6b76] pr-2">
             <button onClick={() => { setNotifOpen(!notifOpen); setProfileOpen(false) }} className="relative">
               <img src="/icon-notification.png" alt="Notifications" className="w-7 h-7 object-contain" />
-              <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full" />
+              {adminNotifications.filter(n => n.unread).length > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center border-2 border-white">
+                  {adminNotifications.filter(n => n.unread).length}
+                </span>
+              )}
             </button>
             <button onClick={() => { setProfileOpen(!profileOpen); setNotifOpen(false) }} className="w-9 h-9 rounded-full bg-[#2ea3e6] text-white flex items-center justify-center font-bold text-sm overflow-hidden">
               {photo ? <img src={photo} alt="" className="w-full h-full object-cover" /> : 'VH'}
@@ -116,7 +147,7 @@ function SidebarContent({ darkMode, onNavigate }: { darkMode: boolean; onNavigat
                   ? pathname === '/'
                   : pathname === item.href || pathname.startsWith(item.href + '/')
               return (
-                <li key={item.href} className={`rounded-[12px] transition-colors duration-300 ${isActive ? (darkMode ? 'bg-[#2d1b4e]' : 'bg-[#ddd6fe]') : (darkMode ? 'hover:bg-[#050617]/50' : 'hover:bg-[#E8E8E8]/50')}`}>
+                <li key={item.label} className={`rounded-[12px] transition-colors duration-300 ${isActive ? (darkMode ? 'bg-[#2d1b4e]' : 'bg-[#ddd6fe]') : (darkMode ? 'hover:bg-[#050617]/50' : 'hover:bg-[#E8E8E8]/50')}`}>
                   <Link
                     href={item.href}
                     onClick={() => onNavigate?.()}
@@ -148,34 +179,27 @@ function SidebarContent({ darkMode, onNavigate }: { darkMode: boolean; onNavigat
 function NotificationDropdown({ onClose, darkMode }: { onClose: () => void; darkMode: boolean }) {
   const [activeCategory, setActiveCategory] = useState('All')
 
-  const fmtNotifDate = (offset: number) =>
-    addDays(new Date(), offset).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
-
   const categoryColors: Record<string, string> = {
-    All: '#4E69D3', Appointment: '#4CAF50', 'Record Management': '#FF9800', Events: '#9C27B0',
+    All: '#4E69D3',
+    ...Object.fromEntries(notificationCategories.map(c => [c.id, c.color])),
   }
 
-  const notifications = [
-    { id: 1, category: 'Appointment', title: 'New Appointment Booked', description: `Juan Dela Cruz booked an appointment for ${fmtNotifDate(0)} at 10:00 AM.`, time: '2 min ago', unread: true },
-    { id: 2, category: 'Appointment', title: 'Appointment Rescheduled', description: `Maria Santos rescheduled her appointment to ${fmtNotifDate(0)}.`, time: '15 min ago', unread: true },
-    { id: 3, category: 'Record Management', title: 'Patient Record Updated', description: 'Pedro Gonzales\' medical record has been updated.', time: '1 hr ago', unread: true },
-    { id: 4, category: 'Events', title: 'New Event Created', description: `Health & Wellness Seminar has been scheduled for ${fmtNotifDate(2)}.`, time: '2 hr ago', unread: false },
-    { id: 5, category: 'Record Management', title: 'Lab Results Uploaded', description: 'New lab results for Ana Lopez are now available.', time: '3 hr ago', unread: false },
-    { id: 6, category: 'Events', title: 'Event Reminder', description: 'Team Meeting starts in 30 minutes.', time: '5 hr ago', unread: false },
-    { id: 7, category: 'Appointment', title: 'Appointment Completed', description: 'Check-up for Jose Rizal has been marked as completed.', time: '1 day ago', unread: false },
-  ]
-
+  const notifications = adminNotifications
+  const categories = ['All', ...notificationCategories.map(c => c.id)]
   const filtered = activeCategory === 'All' ? notifications : notifications.filter(n => n.category === activeCategory)
-  const categories = ['All', 'Appointment', 'Record Management', 'Events']
+  const unreadCount = notifications.filter(n => n.unread).length
 
   return (
     <>
       <div className="fixed inset-0 z-[199]" onClick={onClose} />
       <div className={`absolute top-[70px] right-0 w-[min(450px,calc(100vw-16px))] max-h-[520px] max-w-[calc(100vw-16px)] rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.15)] z-[200] flex flex-col overflow-hidden animate-[slideIn_0.2s_ease] ${darkMode ? 'bg-[#050617]' : 'bg-white'}`}>
         <div className={`flex items-center justify-between px-5 py-4 border-b ${darkMode ? 'border-[rgba(255,255,255,0.10)]' : 'border-gray-200'}`}>
-          <h3 className={`font-poppins text-lg font-bold m-0 ${darkMode ? 'text-[#F9FAFB]' : 'text-[#2A2E43]'}`}>Notifications</h3>
-          <div className="flex items-center gap-2">
-            <button className="text-xs font-semibold text-[#4E69D3] bg-transparent border-none px-2 py-1 rounded-md font-poppins hover:bg-blue-50" onClick={() => {}}>Mark all as read</button>
+          <h3 className={`font-poppins text-lg font-bold m-0 ${darkMode ? 'text-[#F9FAFB]' : 'text-[#2A2E43]'}`}>Admin Notifications</h3>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <button className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold font-poppins border-none cursor-pointer transition-colors whitespace-nowrap ${unreadCount > 0 ? 'bg-red-500 text-white hover:bg-red-600' : `${darkMode ? 'bg-[#0f1438] text-[#4E9FFF] hover:bg-[#141a45]' : 'bg-gray-100 text-[#4E69D3] hover:bg-gray-200'}`}`} onClick={() => {}}>
+              {unreadCount > 0 && <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse flex-shrink-0" />}
+              {unreadCount > 0 ? `${unreadCount} unread · Mark all as read` : 'Mark all as read'}
+            </button>
             <button className={`w-7 h-7 border-none rounded-full cursor-pointer text-sm flex items-center justify-center ${darkMode ? 'bg-[#0f1438] text-[#F9FAFB] hover:bg-[#141a45]' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`} onClick={onClose}>&times;</button>
           </div>
         </div>

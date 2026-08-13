@@ -2,7 +2,6 @@ import { compare } from 'bcrypt'
 import { type NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import prisma from '@/lib/prisma'
-
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: 'jwt',
@@ -29,28 +28,23 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.email || !credentials.password) {
           return null
         }
-
         const user = await prisma.user.findFirst({
           where: {
             deletedAt: null,
             email: credentials.email,
           },
         })
-
         // Not found
         if (!user) {
           return null
         }
-
         const isPasswordValid = await compare(
           credentials.password,
           user.password + ''
         )
-
         if (!isPasswordValid) {
           return null
         }
-
         await prisma.user.update({
           where: {
             email: credentials.email,
@@ -59,7 +53,6 @@ export const authOptions: NextAuthOptions = {
             loggedInAt: new Date().toISOString(),
           },
         })
-
         return {
           id: user.id.toString(),
           name: user.name,
@@ -81,22 +74,22 @@ export const authOptions: NextAuthOptions = {
           token.email = dbUser.email
           token.image = dbUser.image
           token.role = dbUser.role
+          token.position = dbUser.position
         }
       }
-
       if (user) {
         const dbUser = await prisma.user.findUnique({
           where: {
             id: +user.id,
           },
         })
-
         if (dbUser) {
           token.id = dbUser.id
           token.name = dbUser.name
           token.email = dbUser.email
           token.image = dbUser.image
           token.role = dbUser.role
+          token.position = dbUser.position
         }
       }
       return token
@@ -108,7 +101,7 @@ export const authOptions: NextAuthOptions = {
       session.user.email = token.email as string
       session.user.image = token.image as string
       session.user.role = token.role as string
-
+      session.user.position = token.position as string
       return session
     },
   },

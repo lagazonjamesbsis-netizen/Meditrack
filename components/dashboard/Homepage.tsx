@@ -1,8 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import { useSession } from 'next-auth/react'
 import { useDarkMode } from '@/components/globals/DarkModeContext'
-import { now, addDays, fmtLong } from '@/src/lib/dateUtils'
+import { now, fmtLong } from '@/src/lib/dateUtils'
 
 type PatientCardData = {
   name: string
@@ -18,15 +19,6 @@ const todayPatients: PatientCardData[] = [
   { name: 'RICHARDS, Alden P.', ptn: 'PTN-2610204', ref: '1020410', service: 'Basic Consultation', date: fmtLong(now), time: '7:00am to 8:00am' },
   { name: 'CRUZ, Dodong C.', ptn: 'PTN-2610215', ref: '1021503', service: 'Basic Consultation', date: fmtLong(now), time: '7:00am to 8:00am' },
   { name: 'SANTOS, Judith A.', ptn: 'PTN-2610205', ref: '1020502', service: 'Vaccination', date: fmtLong(now), time: '7:00am to 8:00am' },
-]
-
-const upcomingPatients: PatientCardData[] = [
-  { name: 'Patient 1', ptn: 'PTN-0001001', ref: '1000101', service: 'Vaccination', date: fmtLong(addDays(now, 5)), time: '7:00am to 8:00am' },
-  { name: 'Patient 2', ptn: 'PTN-0001002', ref: '1000102', service: 'Vaccination', date: fmtLong(addDays(now, 5)), time: '7:00am to 8:00am' },
-  { name: 'Patient 3', ptn: 'PTN-0001003', ref: '1000103', service: 'Vaccination', date: fmtLong(addDays(now, 5)), time: '7:00am to 8:00am' },
-  { name: 'Patient 4', ptn: 'PTN-0001004', ref: '1000104', service: 'Vaccination', date: fmtLong(addDays(now, 5)), time: '7:00am to 8:00am' },
-  { name: 'Patient 5', ptn: 'PTN-0001005', ref: '1000105', service: 'Vaccination', date: fmtLong(addDays(now, 5)), time: '7:00am to 8:00am' },
-  { name: 'Patient 6', ptn: 'PTN-0001006', ref: '1000106', service: 'Vaccination', date: fmtLong(addDays(now, 5)), time: '7:00am to 8:00am' },
 ]
 
 const POPULATION = {
@@ -52,13 +44,17 @@ const POPULATION = {
 const CENSUS_PER_PUROK = {
   total: 8481,
   puroks: [
-    { label: 'Purok 1', value: 1215, color: '#4E69D3' },
-    { label: 'Purok 2', value: 1142, color: '#7C3AED' },
-    { label: 'Purok 3', value: 1089, color: '#0EA5E9' },
-    { label: 'Purok 4', value: 1318, color: '#10B981' },
-    { label: 'Purok 5', value: 976, color: '#F59E0B' },
-    { label: 'Purok 6', value: 1253, color: '#EF4444' },
-    { label: 'Purok 7', value: 1488, color: '#EC4899' },
+    { label: 'Purok 1A', value: 660, color: '#4E69D3' },
+    { label: 'Purok 1B', value: 555, color: '#8B5CF6' },
+    { label: 'Purok 2A & 2B', value: 1142, color: '#0EA5E9' },
+    { label: 'Purok 3A', value: 630, color: '#10B981' },
+    { label: 'Purok 3B', value: 459, color: '#F59E0B' },
+    { label: 'Purok 4', value: 1318, color: '#EF4444' },
+    { label: 'Purok 5A', value: 510, color: '#EC4899' },
+    { label: 'Purok 5B', value: 466, color: '#14B8A6' },
+    { label: 'Purok 6', value: 1253, color: '#7C3AED' },
+    { label: 'Purok 7', value: 988, color: '#F97316' },
+    { label: 'Purok 8', value: 500, color: '#6366F1' },
   ],
 }
 
@@ -66,12 +62,50 @@ const PATIENT_RECORDS = 5432
 
 export default function Homepage() {
   const { darkMode } = useDarkMode()
+  const { data: session } = useSession()
+
+  const role = session?.user?.role
+  const position = session?.user?.position
+  const firstName = (session?.user?.name || '').trim().split(/\s+/)[0] || ''
+
+  let greeting: string
+  if (position === 'NURSE') {
+    greeting = `Hello, Nurse ${firstName}!`
+  } else if (position === 'MIDWIFE') {
+    greeting = `Hello, Midwife ${firstName}!`
+  } else if (position === 'BHW') {
+    greeting = `Hello, BHW ${firstName}!`
+  } else if (role === 'SUPERADMIN' || role === 'ADMIN') {
+    greeting = 'Hello, Admin!'
+  } else if (firstName) {
+    greeting = `Hello, ${firstName}!`
+  } else {
+    greeting = 'Hello, Admin!'
+  }
 
   return (
     <div>
-      <h1 className={`text-[40px] sm:text-[52px] lg:text-[68px] ${darkMode ? 'text-[#F9FAFB]' : 'text-[#1d4662]'} my-[14px] text-left`}>Hello! Nurse Elaine</h1>
+      <h1 className={`text-[40px] sm:text-[52px] lg:text-[68px] ${darkMode ? 'text-[#F9FAFB]' : 'text-[#1d4662]'} my-[14px] text-left`}>{greeting}</h1>
 
-      <div className="grid grid-cols-3 gap-[22px] mb-7 max-[1100px]:grid-cols-2 max-[768px]:grid-cols-1">
+      <div className="grid grid-cols-4 gap-[22px] mb-7 max-[1100px]:grid-cols-2 max-[768px]:grid-cols-1">
+        <div className={`flex items-center gap-4 max-sm:gap-3 ${darkMode ? 'bg-[#2d1b4e] border-[rgba(255,255,255,0.10)] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.3)]' : 'bg-white border-[rgba(15,60,95,0.10)] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)]'} p-[22px] max-sm:p-4 rounded-[18px] border`}>
+          <div className={`w-14 h-14 max-sm:w-11 max-sm:h-11 rounded-xl ${darkMode ? 'bg-[#141a45]' : 'bg-[#E8EAF6]'} flex items-center justify-center flex-shrink-0`}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#4E69D3" strokeWidth="2" className="w-7 h-7"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+          </div>
+          <div className="flex flex-col">
+            <span className={`text-4xl max-sm:text-3xl font-bold ${darkMode ? 'text-[#F9FAFB]' : 'text-[#2A2E43]'}`}>2,847</span>
+            <span className={`text-lg ${darkMode ? 'text-[#F9FAFB]' : 'text-[#2A2E43]'}`}>Total Users</span>
+          </div>
+        </div>
+        <div className={`flex items-center gap-4 max-sm:gap-3 ${darkMode ? 'bg-[#2d1b4e] border-[rgba(255,255,255,0.10)] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.3)]' : 'bg-white border-[rgba(15,60,95,0.10)] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)]'} p-[22px] max-sm:p-4 rounded-[18px] border`}>
+          <div className={`w-14 h-14 max-sm:w-11 max-sm:h-11 rounded-xl ${darkMode ? 'bg-[#141a45]' : 'bg-[#E8EAF6]'} flex items-center justify-center flex-shrink-0`}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#4E69D3" strokeWidth="2" className="w-7 h-7"><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /><rect x="2" y="11" width="6" height="10" rx="1" /><path d="M8 15h8" /><path d="M16 21h2a2 2 0 0 0 2-2" /><path d="M2 15h6" /></svg>
+          </div>
+          <div className="flex flex-col">
+            <span className={`text-4xl max-sm:text-3xl font-bold ${darkMode ? 'text-[#F9FAFB]' : 'text-[#2A2E43]'}`}>36</span>
+            <span className={`text-lg ${darkMode ? 'text-[#F9FAFB]' : 'text-[#2A2E43]'}`}>Healthcare Staff</span>
+          </div>
+        </div>
         <div className={`flex items-center gap-4 max-sm:gap-3 ${darkMode ? 'bg-[#2d1b4e] border-[rgba(255,255,255,0.10)] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.3)]' : 'bg-white border-[rgba(15,60,95,0.10)] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)]'} p-[22px] max-sm:p-4 rounded-[18px] border`}>
           <div className={`w-14 h-14 max-sm:w-11 max-sm:h-11 rounded-xl ${darkMode ? 'bg-[#141a45]' : 'bg-[#E8EAF6]'} flex items-center justify-center flex-shrink-0`}>
             <svg viewBox="0 0 24 24" fill="none" stroke="#4E69D3" strokeWidth="2" className="w-7 h-7"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
@@ -83,20 +117,11 @@ export default function Homepage() {
         </div>
         <div className={`flex items-center gap-4 max-sm:gap-3 ${darkMode ? 'bg-[#2d1b4e] border-[rgba(255,255,255,0.10)] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.3)]' : 'bg-white border-[rgba(15,60,95,0.10)] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)]'} p-[22px] max-sm:p-4 rounded-[18px] border`}>
           <div className={`w-14 h-14 max-sm:w-11 max-sm:h-11 rounded-xl ${darkMode ? 'bg-[#141a45]' : 'bg-[#E8EAF6]'} flex items-center justify-center flex-shrink-0`}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="#4E69D3" strokeWidth="2" className="w-7 h-7"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /><polyline points="10 9 9 9 8 9" /></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#4E69D3" strokeWidth="2" className="w-7 h-7"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
           </div>
           <div className="flex flex-col">
-            <span className={`text-4xl max-sm:text-3xl font-bold ${darkMode ? 'text-[#F9FAFB]' : 'text-[#2A2E43]'}`}>{upcomingPatients.length}</span>
-            <span className={`text-lg ${darkMode ? 'text-[#F9FAFB]' : 'text-[#2A2E43]'}`}>Upcoming Appointments</span>
-          </div>
-        </div>
-        <div className={`flex items-center gap-4 max-sm:gap-3 ${darkMode ? 'bg-[#2d1b4e] border-[rgba(255,255,255,0.10)] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.3)]' : 'bg-white border-[rgba(15,60,95,0.10)] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)]'} p-[22px] max-sm:p-4 rounded-[18px] border`}>
-          <div className="w-14 h-14 max-sm:w-11 max-sm:h-11 rounded-xl bg-[#FEF3C7] flex items-center justify-center flex-shrink-0">
-            <svg viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" strokeWidth="1" className="w-7 h-7"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
-          </div>
-          <div className="flex flex-col">
-            <span className={`text-4xl max-sm:text-3xl font-bold ${darkMode ? 'text-[#F9FAFB]' : 'text-[#2A2E43]'}`}>4.6 <span className="text-[#F59E0B] text-lg tracking-[1px]">★★★★★</span></span>
-            <span className={`text-lg ${darkMode ? 'text-[#F9FAFB]' : 'text-[#2A2E43]'}`}>Patient Feedback</span>
+            <span className={`text-4xl max-sm:text-3xl font-bold ${darkMode ? 'text-[#F9FAFB]' : 'text-[#2A2E43]'}`}>18</span>
+            <span className={`text-lg ${darkMode ? 'text-[#F9FAFB]' : 'text-[#2A2E43]'}`}>Pending Requests</span>
           </div>
         </div>
       </div>
@@ -183,7 +208,7 @@ function CensusCards({ darkMode }: { darkMode: boolean }) {
           return (
             <div key={p.label} className={`group relative flex flex-col gap-3 ${darkMode ? 'bg-[#2d1b4e] border-[rgba(255,255,255,0.10)] hover:border-[rgba(255,255,255,0.25)]' : 'bg-white border-[rgba(15,60,95,0.10)] hover:border-[#4E69D3]/40'} p-5 rounded-[16px] border transition-all duration-200 hover:-translate-y-0.5 ${darkMode ? 'hover:shadow-[0_8px_20px_rgba(0,0,0,0.35)]' : 'hover:shadow-[0_8px_20px_rgba(15,60,95,0.12)]'}`}>
               <div className="flex items-center justify-between">
-                <span className={`text-sm font-bold uppercase tracking-[1px] ${darkMode ? 'text-[#C4B5FD]' : 'text-[#4E69D3]'}`}>{p.label}</span>
+                <span className={`text-sm font-bold uppercase tracking-[1px] whitespace-nowrap ${darkMode ? 'text-[#C4B5FD]' : 'text-[#4E69D3]'}`}>{p.label}</span>
                 <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${darkMode ? 'bg-[#0f1438] text-gray-300' : 'bg-gray-100 text-gray-500'}`}>#{i + 1}</span>
               </div>
               <div>
@@ -258,7 +283,7 @@ function PurokDonutChart({ darkMode }: { darkMode: boolean }) {
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
           {active ? (
             <>
-              <span className={`text-2xl font-bold ${darkMode ? 'text-[#F9FAFB]' : 'text-[#2A2E43]'}`} style={{ color: active.color }}>{active.label}</span>
+              <span className={`text-2xl font-bold whitespace-nowrap ${darkMode ? 'text-[#F9FAFB]' : 'text-[#2A2E43]'}`} style={{ color: active.color }}>{active.label}</span>
               <span className={`text-3xl leading-none font-bold mt-1 ${darkMode ? 'text-[#F9FAFB]' : 'text-[#2A2E43]'}`}>{active.value.toLocaleString()}</span>
               <span className={`text-sm font-semibold mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{((active.value / total) * 100).toFixed(1)}% of census</span>
             </>
@@ -276,12 +301,12 @@ function PurokDonutChart({ darkMode }: { darkMode: boolean }) {
           const pct = (d.value / total) * 100
           return (
             <div key={d.label} className="flex items-center gap-3">
-              <span className="w-3.5 h-3.5 rounded-full flex-shrink-0" style={{ background: d.color }} />
-              <span className={`w-20 flex-shrink-0 text-lg font-semibold ${darkMode ? 'text-[#F9FAFB]' : 'text-[#2A2E43]'}`}>{d.label}</span>
-              <div className={`h-2.5 rounded-full overflow-hidden flex-1 ${darkMode ? 'bg-[#0f1438]' : 'bg-[#E8EAF6]'}`}>
+              <span className="w-4 h-4 rounded-full flex-shrink-0" style={{ background: d.color }} />
+              <span className={`w-[140px] flex-shrink-0 text-lg font-semibold whitespace-nowrap ${darkMode ? 'text-[#F9FAFB]' : 'text-[#2A2E43]'}`}>{d.label}</span>
+              <div className={`h-2.5 rounded-full overflow-hidden flex-1 min-w-[48px] ${darkMode ? 'bg-[#0f1438]' : 'bg-[#E8EAF6]'}`}>
                 <div className="h-full rounded-full" style={{ width: `${(pct / 18) * 100}%`, background: d.color }} />
               </div>
-              <span className={`w-28 flex-shrink-0 text-right text-lg whitespace-nowrap ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              <span className={`w-24 flex-shrink-0 text-right text-lg whitespace-nowrap ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                 {d.value.toLocaleString()} · {pct.toFixed(1)}%
               </span>
             </div>
