@@ -1,7 +1,10 @@
 import { PrismaClient } from '@prisma/client'
+import { PrismaNeon } from '@prisma/adapter-neon'
 import bcrypt from 'bcrypt'
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient({
+  adapter: new PrismaNeon({ connectionString: process.env.DATABASE_URL_UNPOOLED! }),
+})
 
 async function main() {
   const defaultEmail = 'admin@domain.com'
@@ -14,7 +17,21 @@ async function main() {
       name: 'Admin User',
       email: defaultEmail,
       password: passwordHash,
-      role: 'SUPERADMIN', // from your Role enum
+      role: 'SUPERADMIN',
+      activatedAt: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  })
+
+  const nurseElaine = await prisma.user.upsert({
+    where: { email: 'elaine@meditrack.com' },
+    update: {},
+    create: {
+      name: 'Nurse Elaine',
+      email: 'elaine@meditrack.com',
+      password: await bcrypt.hash('nurseElaine123', 10),
+      role: 'NURSE',
       activatedAt: new Date(),
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -23,12 +40,12 @@ async function main() {
 
   const midwife = await prisma.user.upsert({
     where: { email: 'vhernandez@meditrack.com' },
-    update: {},
+    update: { role: 'ADMIN' },
     create: {
       name: 'Vivianne Hernandez',
       email: 'vhernandez@meditrack.com',
       password: await bcrypt.hash('midwife123', 10),
-      role: 'USER',
+      role: 'ADMIN',
       activatedAt: new Date(),
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -36,6 +53,7 @@ async function main() {
   })
 
   console.log('✅ Seeded admin user:', admin.email)
+  console.log('✅ Seeded nurse user:', nurseElaine.email)
   console.log('✅ Seeded midwife user:', midwife.email)
 }
 

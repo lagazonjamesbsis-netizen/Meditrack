@@ -42,5 +42,6 @@ model ResetPasswordToken {
 enum Role {
   SUPERADMIN
   ADMIN
+  NURSE
   USER
 }

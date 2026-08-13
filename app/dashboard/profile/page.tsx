@@ -6,17 +6,17 @@ import { useDarkMode } from '@/components/globals/DarkModeContext'
 import { useProfilePhoto } from '@/components/globals/ProfilePhotoContext'
 
 const profileData = {
-  initials: 'VH',
-  name: 'Vivianne Hernandez',
+  initials: 'EA',
+  name: 'Elaine Arceo',
   id: 'MS-0001',
-  role: 'Midwife',
-  email: 'vhernandez@meditrack.com',
+  role: 'Nurse',
+  email: 'elaine@meditrack.com',
   phone: '+63 912 345 6789',
   address: '123 Health Street, Barangay San Isidro, Manila',
-  department: 'Maternal & Child Health',
+  department: 'Nursing Services',
   joinDate: 'January 15, 2022',
-  education: 'BS in Midwifery — University of Santo Tomas',
-  license: 'MW-123456',
+  education: 'BS in Nursing — University of Santo Tomas',
+  license: 'RN-123456',
   emergencyContact: 'Juan Hernandez — +63 917 654 3210',
 }
 

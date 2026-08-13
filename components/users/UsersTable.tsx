@@ -257,6 +257,7 @@ export default function UsersTable({
               <label>Role</label>
               <select name="role" className="w-full">
                 <option value="USER">User</option>
+                <option value="NURSE">Nurse</option>
                 <option value="ADMIN">Admin</option>
                 <option value="SUPERADMIN">Superadmin</option>
               </select>
@@ -311,6 +312,7 @@ export default function UsersTable({
                 defaultValue={selectedUser.role}
               >
                 <option value="USER">User</option>
+                <option value="NURSE">Nurse</option>
                 <option value="ADMIN">Admin</option>
                 <option value="SUPERADMIN">Superadmin</option>
               </select>
@@ -357,6 +359,7 @@ function RoleBadge({ role }: { role: string }) {
   const styles: Record<string, string> = {
     SUPERADMIN: 'bg-accent text-white',
     ADMIN: 'bg-tertiary text-foreground',
+    NURSE: 'bg-emerald-100 text-emerald-700',
     USER: 'bg-secondary text-foreground',
   }
   return (

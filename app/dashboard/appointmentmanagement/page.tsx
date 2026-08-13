@@ -98,6 +98,8 @@ const walkInServices = ['Basic Consultation', 'Vaccination', 'Check-up', 'Pre-na
 
 const walkInTimes = ['7:00am to 8:00am', '8:00am to 9:00am', '9:00am to 10:00am', '10:00am to 11:00am', '1:00pm to 2:00pm', '2:00pm to 3:00pm', '3:00pm to 4:00pm']
 
+const walkInPuroks = ['Purok 1A', 'Purok 1B', 'Purok 2A & 2B', 'Purok 3A', 'Purok 3B', 'Purok 4', 'Purok 5A', 'Purok 5B', 'Purok 6', 'Purok 7', 'Purok 8']
+
 function ListCard({ patient, darkMode, onViewRecord }: { patient: ListAppointment; darkMode: boolean; onViewRecord: (record: PatientRecord) => void }) {
   const sc = (service: string) => serviceColors[service] || { bg: '#F7FAFC', color: '#718096', label: service }
   return (
@@ -707,7 +709,7 @@ export default function AppointmentPage() {
                 <div>
                   <h3 className={`font-poppins text-[17px] font-bold ${darkMode ? 'text-[#F9FAFB]' : 'text-[#2A2E43]'} m-0 pb-1.5 mb-4 border-b-2 border-[#4E69D3] inline-block`}>Address</h3>
                   <div className="grid grid-cols-2 gap-4 max-[768px]:grid-cols-1">
-                    <WalkInInput darkMode={darkMode} label="Street / Purok" value={walkInForm.street} onChange={v => updateWalkIn('street', v)} error={walkInErrors.street} placeholder="Purok 1A" />
+                    <WalkInSelect darkMode={darkMode} label="Street / Purok" value={walkInForm.street} onChange={v => updateWalkIn('street', v)} error={walkInErrors.street} options={walkInPuroks} placeholder="Select purok" />
                     <WalkInInput darkMode={darkMode} label="Barangay" value={walkInForm.barangay} onChange={v => updateWalkIn('barangay', v)} />
                   </div>
                   <h3 className={`font-poppins text-[17px] font-bold ${darkMode ? 'text-[#F9FAFB]' : 'text-[#2A2E43]'} m-0 pb-1.5 mt-6 mb-4 border-b-2 border-[#4E69D3] inline-block`}>PhilHealth Information</h3>

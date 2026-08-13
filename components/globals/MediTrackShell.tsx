@@ -74,7 +74,7 @@ function LayoutInner({ children }: { children: React.ReactNode }) {
               <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full" />
             </button>
             <button onClick={() => { setProfileOpen(!profileOpen); setNotifOpen(false) }} className="w-9 h-9 rounded-full bg-[#2ea3e6] text-white flex items-center justify-center font-bold text-sm overflow-hidden">
-              {photo ? <img src={photo} alt="" className="w-full h-full object-cover" /> : 'VH'}
+              {photo ? <img src={photo} alt="" className="w-full h-full object-cover" /> : 'EA'}
             </button>
           </div>
         </div>
@@ -235,8 +235,8 @@ function ProfileDropdown({ onClose }: { onClose: () => void }) {
           </div>
           <div className="min-w-0 leading-tight">
             <span className="text-[11px] font-bold text-[#4E69D3] uppercase tracking-[0.5px] block">MS-0001</span>
-            <span className={`text-sm font-bold block ${darkMode ? 'text-[#F9FAFB]' : 'text-[#2A2E43]'}`}>Vivianne Hernandez</span>
-            <span className={`text-xs block truncate ${darkMode ? 'text-[#F9FAFB]' : 'text-gray-500'}`}>vhernandez@meditrack.com</span>
+            <span className={`text-sm font-bold block ${darkMode ? 'text-[#F9FAFB]' : 'text-[#2A2E43]'}`}>Elaine Arceo</span>
+            <span className={`text-xs block truncate ${darkMode ? 'text-[#F9FAFB]' : 'text-gray-500'}`}>elaine@meditrack.com</span>
           </div>
         </div>
         <div className="py-2">

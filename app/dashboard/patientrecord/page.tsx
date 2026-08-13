@@ -1,6 +1,7 @@
 ﻿'use client'
 
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { toast } from 'sonner'
 import { useDarkMode } from '@/components/globals/DarkModeContext'
 import { puroks, emptyForm, emptyImmunization, emptyMedical, requiredFields, initialRecords, type PatientRecord } from '@/src/data/patientRecords'
@@ -122,49 +123,7 @@ export default function PatientRecordPage() {
   }
 
   const handlePrint = () => {
-    if (!viewingPatient) return
-    const p = viewingPatient
-    const win = window.open('', '_blank')
-    if (!win) return
-    const f = p.form
-    const esc = (s: string | undefined) => s || ''
-    const row = (l: string, v: string) => '<tr><td>' + l + '</td><td>' + v + '</td></tr>'
-    let html = '<html><head><title>Patient Record - ' + esc(p.id) + '</title><style>'
-      + 'body{font-family:"Segoe UI",Arial,sans-serif;padding:40px;color:#333}'
-      + 'h1{font-size:22px;margin-bottom:4px}.sub{color:#666;font-size:13px;margin-bottom:24px}'
-      + 'h2{font-size:15px;border-bottom:2px solid #4E69D3;padding-bottom:4px;margin:20px 0 12px;color:#2A2E43}'
-      + 'table{width:100%;border-collapse:collapse;margin-bottom:8px}'
-      + 'td{padding:4px 12px 4px 0;font-size:13px;vertical-align:top}'
-      + 'td:first-child{font-weight:600;color:#555;white-space:nowrap;width:180px}'
-      + '.section{margin-bottom:16px}.no-data{color:#999;font-style:italic;font-size:13px}'
-      + '@media print{body{padding:20px}}'
-      + '</style></head><body>'
-      + '<h1>MediTrack - Patient Record</h1><div class="sub">Record ID: ' + esc(p.id) + '</div>'
-
-    const addSection = (title: string, fields: [string, string][]) => {
-      html += '<h2>' + title + '</h2><table>' + fields.map(([l, v]) => row(l, esc(v))).join('') + '</table>'
-    }
-
-    const addSubRecords = (title: string, recs: Record<string, string>[], fields: [string, string][]) => {
-      html += '<h2>' + title + '</h2>'
-      if (!recs || recs.length === 0) { html += '<div class="no-data">No ' + title.toLowerCase() + '.</div>'; return }
-      html += recs.map((rec, i) => '<div class="section"><strong>Record #' + (i + 1) + '</strong><table>' + fields.map(([l, field]) => row(l, esc(rec[field]) || '\u2014')).join('') + '</table></div>').join('')
-    }
-
-    addSection('Personal Information', [['Name', (esc(f.lastName) + ', ' + esc(f.givenName) + ' ' + esc(f.middleName)).trim()], ['Suffix', f.suffix || 'N/A'], ['Maiden Name', f.maidenName || 'N/A'], ['Sex', f.sex || 'N/A'], ['Blood Type', f.bloodType || 'N/A'], ['Birthdate', f.birthdate || 'N/A'], ['Age', f.age || 'N/A'], ['Place of Birth', f.placeOfBirth || 'N/A'], ['Civil Status', f.civilStatus || 'N/A'], ['Religion', f.religion || 'N/A'], ['Contact', f.contactNumber || 'N/A']])
-    addSection("Father's Name", [['Name', (esc(f.fatherLastName) || 'N/A') + ', ' + esc(f.fatherGivenName) + ' ' + esc(f.fatherMiddleName)]])
-    addSection("Mother's Maiden Name", [['Name', (esc(f.motherLastName) || 'N/A') + ', ' + esc(f.motherGivenName) + ' ' + esc(f.motherMiddleName)]])
-    addSection('Address', [['Region', f.region || 'N/A'], ['Province', f.province || 'N/A'], ['City/Municipality', f.city || 'N/A'], ['Barangay', f.barangay || 'N/A'], ['Street/Purok', f.street || 'N/A'], ['Postal Code', f.postalCode || 'N/A']])
-    addSection('PhilHealth Information', [['PhilHealth No.', f.philHealthNo || 'N/A'], ['Member Name', f.memberName || 'N/A'], ['Spouse', f.spouseName || 'N/A'], ['Member Birthdate', f.memberBirthdate || 'N/A'], ['Address', f.completeAddress || 'N/A'], ['Dependent', f.memberDependent || 'N/A'], ['Family Role', f.familyMemberRole || 'N/A'], ['Education', f.educationalAttainment || 'N/A']])
-    addSubRecords('Immunization Records', p.immunizationRecords, [['BCG', 'bcg'], ['HEPA B (24h)', 'hepaB24'], ['HEPA B (<24h)', 'hepaBLess24'], ['PENTAVALENT 1', 'pentavalent1'], ['MCV 1 (AMV)', 'mcv1'], ['OPV 1', 'opv1'], ['ROTA 1', 'rota1'], ['PCV 1', 'pcv1'], ['HEPA B2', 'hepaB2'], ['PNEUMONIA', 'pneumonia'], ['INFLUENZA', 'influenza']])
-    addSubRecords('Medical Records', p.medicalRecords, [['Date', 'date'], ['BP', 'bp'], ['HR', 'hr'], ['RR', 'rr'], ['Weight', 'weight'], ['Height', 'height'], ['Temperature', 'temperature']])
-    html += '<h2>Chief Complaints</h2><p>' + esc(f.chiefComplaints || 'None') + '</p>'
-      + '<h2>Diagnosis</h2><p>' + esc(f.diagnosis || 'None') + '</p>'
-      + '<h2>Medications / Treatment</h2><p>' + esc(f.medications || 'None') + '</p>'
-      + '</body></html>'
-    win.document.write(html)
-    win.document.close()
-    win.print()
+    window.print()
   }
 
   const formatName = (r: PatientRecord) => {
@@ -399,14 +358,36 @@ export default function PatientRecordPage() {
         </div>
       )}
 
-      {viewingPatient && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-start z-[1000] p-3 sm:p-4 lg:p-10 overflow-y-auto">
-          <div className={`${darkMode ? 'bg-[#2d1b4e]' : 'bg-white'} rounded-2xl w-full max-w-[960px] shadow-[0_20px_60px_rgba(0,0,0,0.2)] flex flex-col max-h-[90vh]`} onClick={e => e.stopPropagation()}>
-            <div className={`flex justify-between items-center px-4 sm:px-7 py-4 sm:py-5 ${darkMode ? 'border-[rgba(255,255,255,0.10)]' : 'border-gray-200'} border-b sticky top-0 ${darkMode ? 'bg-[#2d1b4e]' : 'bg-white'} rounded-t-2xl z-10`}>
-              <h2 className={`font-poppins text-2xl font-bold ${darkMode ? 'text-[#F9FAFB]' : 'text-[#2A2E43]'} m-0`}>Patient Record &mdash; {viewingPatient.id}</h2>
-              <button className={`w-9 h-9 border-none ${darkMode ? 'bg-[#0f1438]' : 'bg-gray-100'} rounded-full text-xl ${darkMode ? 'text-[#F9FAFB]' : 'text-gray-500'} cursor-pointer flex items-center justify-center hover:bg-red-500 hover:text-white transition-all`} onClick={() => setViewingPatient(null)}>&times;</button>
+      {viewingPatient && createPortal((
+        <>
+        <style>{'@media print { body > *:not(#patient-record-print) { display: none !important; } }'}</style>
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[1000] print:hidden" onClick={() => setViewingPatient(null)} />
+        <div id="patient-record-print" className="fixed inset-0 z-[1001] flex justify-center items-start p-3 sm:p-4 lg:p-10 overflow-y-auto print:static print:z-auto print:p-0 print:overflow-visible print:inset-auto" onClick={() => setViewingPatient(null)}>
+          <div className={`${darkMode ? 'bg-[#2d1b4e]' : 'bg-white'} rounded-2xl w-full max-w-[960px] shadow-[0_20px_60px_rgba(0,0,0,0.2)] flex flex-col max-h-[90vh] relative overflow-hidden print:[&_*]:!bg-white print:[&_*]:!text-[#2A2E43] print:[&_*]:!border-[#e5e7eb] print:max-h-none print:rounded-none print:shadow-none print:max-w-none`} onClick={e => e.stopPropagation()}>
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none select-none opacity-20 z-0 print:hidden">
+              <div className="w-[300px] h-[300px] flex-shrink-0">
+                <img src="/meditrack-logo.png" alt="MediTrack" className="w-full h-full object-contain" />
+              </div>
+              <div className="flex flex-col items-center gap-0">
+                <h1 className={`font-bebas text-[100px] leading-none m-0 whitespace-nowrap ${darkMode ? 'text-[#F9FAFB]' : 'text-[#0F588B]'}`}>MEDITRACK</h1>
+                <p className={`w-full font-asap text-[34px] tracking-[3px] leading-none m-0 -mt-3 text-justify [text-align-last:justify] ${darkMode ? 'text-[#F9FAFB]' : 'text-[#0F588B]'}`}>Stay On Track With Us</p>
+              </div>
             </div>
-            <div className="px-4 sm:px-7 py-6 overflow-y-auto flex-1 max-h-[72vh]">
+            <div className={`flex justify-between items-center px-4 sm:px-7 py-4 sm:py-5 ${darkMode ? 'border-[rgba(255,255,255,0.10)]' : 'border-gray-200'} border-b sticky top-0 ${darkMode ? 'bg-[#2d1b4e]' : 'bg-white'} rounded-t-2xl z-10 print:static print:hidden`}>
+              <h2 className={`font-poppins text-2xl font-bold ${darkMode ? 'text-[#F9FAFB]' : 'text-[#2A2E43]'} m-0`}>Patient Record &mdash; {viewingPatient.id}</h2>
+              <button className={`w-9 h-9 border-none ${darkMode ? 'bg-[#0f1438]' : 'bg-gray-100'} rounded-full text-xl ${darkMode ? 'text-[#F9FAFB]' : 'text-gray-500'} cursor-pointer flex items-center justify-center hover:bg-red-500 hover:text-white transition-all flex-shrink-0 print:hidden`} onClick={() => setViewingPatient(null)}>&times;</button>
+            </div>
+            <div className="px-4 sm:px-7 py-6 overflow-y-auto flex-1 max-h-[72vh] relative z-10 print:max-h-none print:overflow-visible">
+              <div className="hidden print:flex flex-col items-center mb-8">
+                <div className="w-16 h-16">
+                  <img src="/meditrack-logo.png" alt="MediTrack" className="w-full h-full object-contain" />
+                </div>
+                <h1 className="font-bebas text-[30px] leading-none m-0">MEDITRACK</h1>
+                <p className="font-asap text-[13px] tracking-[3px] leading-none m-0 mt-1">Stay On Track With Us</p>
+                <h2 className="text-[20px] font-bold m-0 mt-5 pb-1 border-b-[3px] border-[#4E69D3]">Patient Record</h2>
+                <p className="text-[13px] m-0 mt-2">{viewingPatient.id} &middot; {viewingPatient.deceased ? 'Deceased' : 'Active'}</p>
+              </div>
+              <div className="relative">
               <ViewSection darkMode={darkMode} title="Personal Information" fields={[['Name', (viewingPatient.form.lastName || '') + ', ' + (viewingPatient.form.givenName || '') + ' ' + (viewingPatient.form.middleName || '')], ['Suffix', viewingPatient.form.suffix || 'N/A'], ['Maiden Name', viewingPatient.form.maidenName || 'N/A'], ['Sex', viewingPatient.form.sex || ''], ['Blood Type', viewingPatient.form.bloodType || ''], ['Birthdate', viewingPatient.form.birthdate || ''], ['Age', viewingPatient.form.age || ''], ['Place of Birth', viewingPatient.form.placeOfBirth || 'N/A'], ['Civil Status', viewingPatient.form.civilStatus || 'N/A'], ['Religion', viewingPatient.form.religion || 'N/A'], ['Contact', viewingPatient.form.contactNumber || 'N/A']]} />
               <ViewSection darkMode={darkMode} title="Father's Name" fields={[['Name', (viewingPatient.form.fatherLastName || 'N/A') + ', ' + (viewingPatient.form.fatherGivenName || '') + ' ' + (viewingPatient.form.fatherMiddleName || '')]]} />
               <ViewSection darkMode={darkMode} title="Mother's Maiden Name" fields={[['Name', (viewingPatient.form.motherLastName || 'N/A') + ', ' + (viewingPatient.form.motherGivenName || '') + ' ' + (viewingPatient.form.motherMiddleName || '')]]} />
@@ -417,8 +398,9 @@ export default function PatientRecordPage() {
               <ViewTextSection darkMode={darkMode} title="Chief Complaints" content={viewingPatient.form.chiefComplaints} />
               <ViewTextSection darkMode={darkMode} title="Diagnosis" content={viewingPatient.form.diagnosis} />
               <ViewTextSection darkMode={darkMode} title="Medications / Treatment" content={viewingPatient.form.medications} />
+              </div>
             </div>
-            <div className={`flex justify-between gap-3 px-4 sm:px-7 py-4.5 ${darkMode ? 'border-[rgba(255,255,255,0.10)]' : 'border-gray-200'} border-t sticky bottom-0 ${darkMode ? 'bg-[#2d1b4e]' : 'bg-white'} rounded-b-2xl`}>
+            <div className={`flex justify-between gap-3 px-4 sm:px-7 py-4.5 ${darkMode ? 'border-[rgba(255,255,255,0.10)]' : 'border-gray-200'} border-t sticky bottom-0 ${darkMode ? 'bg-[#2d1b4e]' : 'bg-white'} rounded-b-2xl relative z-10 print:hidden`}>
               <div className="flex items-center gap-2">
                 <button className="inline-flex items-center gap-2 px-6 py-3 border-none rounded-lg bg-[#c4b5fd] text-gray-800 text-[15px] font-bold font-poppins cursor-pointer hover:bg-[#a78bfa] transition-colors" onClick={handlePrint}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
@@ -435,7 +417,8 @@ export default function PatientRecordPage() {
             </div>
           </div>
         </div>
-      )}
+        </>
+      ), document.body)}
 
       {showModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-start z-[1000] p-3 sm:p-4 lg:p-10 overflow-y-auto">

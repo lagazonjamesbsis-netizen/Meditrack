@@ -10,7 +10,7 @@ import { requireAdmin, requireUser, sanitizeUser, sanitizeUsers } from "@/lib/ac
 
 const table = "user"
 const MIN_PASSWORD_LENGTH = 8
-const VALID_ROLES = ["SUPERADMIN", "ADMIN", "USER"]
+const VALID_ROLES = ["SUPERADMIN", "ADMIN", "NURSE", "USER"]
 
 // GET ONE
 async function getUserData(id: string) {

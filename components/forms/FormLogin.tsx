@@ -67,10 +67,14 @@ export default function FormLogin({ className }: { className?: string }) {
           },
         })
 
-        // Wait 1 second before redirecting
+        // Route medical-staff users to the nurse homepage, while keeping the
+        // dashboard for admin/system users.
         setTimeout(() => {
-          const MIDWIFE_EMAIL = 'vhernandez@meditrack.com'
-          redirect(email.toLowerCase() === MIDWIFE_EMAIL ? '/' : '/dashboard')
+          const MEDICAL_STAFF_EMAILS = [
+            'elaine@meditrack.com',
+            'vhernandez@meditrack.com',
+          ]
+          redirect(MEDICAL_STAFF_EMAILS.includes(email.toLowerCase()) ? '/' : '/dashboard')
         }, 1000)
 
         //

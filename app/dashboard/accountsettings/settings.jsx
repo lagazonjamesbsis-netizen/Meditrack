@@ -249,9 +249,9 @@ function Toggle({ checked, onChange }) {
 function AccountSection({ darkMode }) {
   const [editing, setEditing] = useState(false)
   const [form, setForm] = useState({
-    name: 'Vivianne Hernandez',
-    email: 'vhernandez@meditrack.com',
-    role: 'Midwife',
+    name: 'Elaine Arceo',
+    email: 'elaine@meditrack.com',
+    role: 'Nurse',
     employeeId: 'MS-0001',
   })
   const [showPassword, setShowPassword] = useState(false)
@@ -286,7 +286,7 @@ function AccountSection({ darkMode }) {
     toast.success('Account settings updated successfully')
   }
   const handleCancel = () => {
-    setForm({ name: 'Vivianne Hernandez', email: 'vhernandez@meditrack.com', role: 'Midwife', employeeId: 'MS-0001' })
+    setForm({ name: 'Elaine Arceo', email: 'elaine@meditrack.com', role: 'Nurse', employeeId: 'MS-0001' })
     setEditing(false)
   }
 
