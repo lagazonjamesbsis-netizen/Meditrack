@@ -2,21 +2,21 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { toast } from 'sonner'
-import { useDarkMode } from '../DarkModeContext'
-import { useProfilePhoto } from '../ProfilePhotoContext'
+import { useDarkMode } from '@/app/staff/DarkModeContext'
+import { useProfilePhoto } from '@/app/staff/ProfilePhotoContext'
 
 const profileData = {
-  initials: 'VH',
-  name: 'Vivianne Hernandez',
-  id: 'MW-0001',
-  role: 'Midwife',
-  email: 'vhernandez@meditrack.com',
+  initials: 'EA',
+  name: 'Elaine Arceo',
+  id: 'MS-0001',
+  role: 'Nurse',
+  email: 'elaine@meditrack.com',
   phone: '+63 912 345 6789',
   address: '123 Health Street, Barangay San Isidro, Manila',
-  department: 'Maternal & Child Health',
+  department: 'Nursing Services',
   joinDate: 'January 15, 2022',
-  education: 'BS in Midwifery — University of Santo Tomas',
-  license: 'MW-123456',
+  education: 'BS in Nursing — University of Santo Tomas',
+  license: 'RN-123456',
   emergencyContact: 'Juan Hernandez — +63 917 654 3210',
 }
 
@@ -41,6 +41,12 @@ export default function ProfilePage() {
     setCropModal(null)
   }
 
+  const handleCropRemove = () => {
+    setPhoto(null)
+    setCropModal(null)
+    toast.success('Profile photo removed')
+  }
+
   const handleSave = () => {
     setEditing(false)
     toast.success('Profile updated successfully')
@@ -55,7 +61,7 @@ export default function ProfilePage() {
   return (
     <div>
       <div className="flex items-center justify-between my-[18px]">
-        <h1 className={`text-[32px] ${darkMode ? 'text-[#F9FAFB]' : 'text-[#1d4662]'} text-left m-0`}>My Profile</h1>
+        <h1 className={`text-[30px] sm:text-[38px] lg:text-[45px] ${darkMode ? 'text-[#F9FAFB]' : 'text-[#1d4662]'} text-left m-0`}>My Profile</h1>
         {!editing ? (
           <button
             className="flex items-center gap-2 bg-[#4E69D3] text-white px-5 py-2.5 rounded-md text-sm font-semibold border-none cursor-pointer hover:bg-[#3D56B8] transition-colors"
@@ -169,13 +175,14 @@ export default function ProfilePage() {
           darkMode={darkMode}
           onSave={handleCropSave}
           onCancel={handleCropCancel}
+          onRemove={handleCropRemove}
         />
       )}
     </div>
   )
 }
 
-function CropModal({ src, darkMode, onSave, onCancel }: { src: string | null; darkMode: boolean; onSave: (dataUrl: string) => void; onCancel: () => void }) {
+function CropModal({ src, darkMode, onSave, onCancel, onRemove }: { src: string | null; darkMode: boolean; onSave: (dataUrl: string) => void; onCancel: () => void; onRemove: () => void }) {
   const SIZE = 280
   const [zoom, setZoom] = useState(1)
   const [pan, setPan] = useState({ x: 0, y: 0 })
@@ -278,12 +285,14 @@ function CropModal({ src, darkMode, onSave, onCancel }: { src: string | null; da
 
   return (
     <>
-      <div className="fixed inset-0 z-[300] bg-black/60 flex items-center justify-center" onClick={onCancel}>
+      <div className="fixed inset-0 z-[300] bg-black/60 flex items-center justify-center p-4" onClick={onCancel}>
         <div
-          className={`${darkMode ? 'bg-[#2d1b4e]' : 'bg-white'} rounded-[18px] p-6 shadow-[0_8px_32px_rgba(0,0,0,0.3)] w-[400px]`}
+          className={`${darkMode ? 'bg-[#2d1b4e]' : 'bg-white'} rounded-[18px] p-4 sm:p-6 shadow-[0_8px_32px_rgba(0,0,0,0.3)] w-full max-w-[400px]`}
           onClick={e => e.stopPropagation()}
         >
-          <h3 className={`text-[20px] font-bold m-0 mb-4 ${darkMode ? 'text-[#F9FAFB]' : 'text-[#2A2E43]'}`}>Adjust Photo</h3>
+          <h3 className={`text-[20px] font-bold m-0 mb-4 ${darkMode ? 'text-[#F9FAFB]' : 'text-[#2A2E43]'}`}>
+            {currentSrc ? 'Adjust Photo' : 'Add Photo'}
+          </h3>
 
           {currentSrc ? (
             <>
@@ -340,7 +349,7 @@ function CropModal({ src, darkMode, onSave, onCancel }: { src: string | null; da
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" />
               </svg>
-              New Photo
+              {currentSrc ? 'New Photo' : 'Add Photo'}
             </button>
             <button
               className="bg-transparent text-[#4E69D3] border border-[#4E69D3] px-5 py-2.5 rounded-md text-sm font-semibold cursor-pointer hover:bg-[#EEF0FB] transition-colors"
@@ -357,6 +366,20 @@ function CropModal({ src, darkMode, onSave, onCancel }: { src: string | null; da
               </button>
             )}
           </div>
+
+          {src && (
+            <div className={`mt-4 pt-3 border-t flex justify-center ${darkMode ? 'border-[rgba(255,255,255,0.10)]' : 'border-gray-200'}`}>
+              <button
+                className="flex items-center gap-2 bg-transparent text-red-500 px-4 py-2 rounded-md text-sm font-semibold cursor-pointer hover:bg-red-50 transition-colors"
+                onClick={onRemove}
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+                  <polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" />
+                </svg>
+                Remove Photo
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

@@ -42,6 +42,20 @@ export async function requireStaff(): Promise<Session | null> {
   return session
 }
 
+// Account approval gate for the patient dashboard. This branch's schema has
+// no approval workflow (no `status` field on User), so every signed-in user
+// is treated as already approved. Admins are reported as such.
+export async function getAccountAccess(): Promise<{
+  status: string
+  approved: boolean
+  admin: boolean
+} | null> {
+  const session = await getSession()
+  if (!session?.user?.id) return null
+  const admin = ADMIN_ROLES.includes((session.user.role as string) ?? '')
+  return { status: 'APPROVED', approved: true, admin }
+}
+
 // Strips the password hash (and any other secrets) before a user row is sent
 // to the client. Accepts a single row or an array.
 export function sanitizeUser<T extends { password?: unknown } | null>(

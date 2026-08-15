@@ -1,7 +1,7 @@
 "use client"
 
 import { SessionProvider } from "next-auth/react"
-import { DarkModeProvider } from "@/app/staff/DarkModeContext"
+import { DarkModeProvider } from "@/components/globals/DarkModeContext"
 
 type Props = {
   children?: React.ReactNode
