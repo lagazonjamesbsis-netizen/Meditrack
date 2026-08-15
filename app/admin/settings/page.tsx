@@ -4,7 +4,7 @@
 import { Bell, Eye, HelpCircle, Info, Lock, LogOut, MessageSquare, Monitor, Moon, Pencil, ScrollText, Shield, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useDarkMode } from "@/app/meditrack/DarkModeContext";
+import { useDarkMode } from "@/app/staff/DarkModeContext";
 import { useCurrentUser } from "@/app/admin/CurrentUserContext";
 
 type SettingsTab =

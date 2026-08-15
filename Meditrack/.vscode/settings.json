@@ -1,9 +1,0 @@
-{
-  "editor.tabSize": 2,
-  "editor.insertSpaces": true,
-  "files.eol": "\n",
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "prettier.semi": false,
-  "prettier.singleQuote": true
-}

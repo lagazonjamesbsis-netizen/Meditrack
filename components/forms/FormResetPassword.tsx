@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useActionState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { resetPassword } from '@/lib/actions/util'
+import Field from '@/components/auth/Field'
 
 export default function FormResetPassword({
   className,
@@ -39,17 +40,18 @@ export default function FormResetPassword({
   //if no token and email return:
   if (!email && !token) {
     return (
-      <div className="boreder-black m-auto w-full max-w-lg space-y-14">
-        <div className="space-y-6">
-          <h1 className="text-left text-3xl font-bold">
-            Reset password invalid link!
+      <div className="m-auto w-full max-w-lg space-y-10">
+        <div className="space-y-4">
+          <h1 className="font-bebas text-[32px] leading-none text-ink">
+            Invalid reset link
           </h1>
-          <p className="text-muted-foreground text-left">
-            Please check your email for the reset password link.
+          <p className="text-[14px] leading-relaxed text-slate">
+            This link is missing or has expired. Check your email for the
+            reset link and try again.
           </p>
         </div>
-        <Link href="/login" className="button button--secondary">
-          Go back to Homepage
+        <Link href="/forgot-password" className="btn btn--primary">
+          Request a new link
         </Link>
       </div>
     )
@@ -63,75 +65,37 @@ export default function FormResetPassword({
       data-loading={isPending}
       className={`flex flex-col gap-5 ${className}`}
     >
-      <div className="w-full form-control">
-        <label className="auth-label" htmlFor="email">
-          Email*
-        </label>
-        <input
-          required
-          className={`${
-            !state?.success && state?.errors?.email
-              ? 'has-errors'
-              : 'border-gray-400 text-gray-400'
-          } auth-input w-full`}
-          type="email"
-          name="email"
-          value={email}
-          readOnly
-        />
-      </div>
+      <Field
+        label="Email address"
+        id="email"
+        type="email"
+        name="email"
+        value={email}
+        readOnly
+        required
+      />
 
-      <div className="w-full form-control">
-        <span className="flex flex-row justify-between">
-          <label className="auth-label" htmlFor="password">
-            Password*{' '}
-          </label>
-        </span>
-        <input
-          required
-          className={`${
-            !state?.success && state?.errors?.password
-              ? 'has-errors'
-              : 'border-black'
-          } auth-input w-full`}
-          name="password"
-          type="password"
-          placeholder="********"
-        />
-        {/* Field Alert */}
-        {state?.errors?.password && (
-          <div className="error text-red-500 text-[12px] font-semibold">
-            {' '}
-            {state?.errors?.password}{' '}
-          </div>
-        )}
-      </div>
+      <Field
+        label="Password"
+        id="password"
+        type="password"
+        name="password"
+        placeholder="••••••••"
+        autoComplete="new-password"
+        required
+        error={state?.errors?.password}
+      />
 
-      <div className="w-full form-control">
-        <span className="flex flex-row justify-between">
-          <label className="auth-label" htmlFor="confirmpassword">
-            Confirm Password*{' '}
-          </label>
-        </span>
-        <input
-          required
-          className={`${
-            !state?.success && state?.errors?.confirmPassword
-              ? 'has-errors'
-              : 'border-black'
-          } auth-input w-full`}
-          name="confirmPassword"
-          type="password"
-          placeholder="********"
-        />
-        {/* Field Alert */}
-        {state?.errors?.confirmPassword && (
-          <div className="error text-red-500 text-[12px] font-semibold">
-            {' '}
-            {state?.errors?.confirmPassword}{' '}
-          </div>
-        )}
-      </div>
+      <Field
+        label="Confirm password"
+        id="confirmpassword"
+        type="password"
+        name="confirmPassword"
+        placeholder="••••••••"
+        autoComplete="new-password"
+        required
+        error={state?.errors?.confirmpassword}
+      />
 
       {/* Alert */}
       {state.message && (
@@ -150,10 +114,10 @@ export default function FormResetPassword({
       <div>
         <button
           type="submit"
-          className="button button--accent w-full justify-center disabled:animate-pulse disabled:opacity-50"
+          className="btn btn--primary disabled:animate-pulse disabled:opacity-50"
           disabled={isPending}
         >
-          {isPending ? 'Please wait...' : 'Reset Password'}
+          {isPending ? 'Please wait…' : 'Reset password'}
         </button>
       </div>
     </form>
