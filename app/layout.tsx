@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono, Bebas_Neue, Asap_Condensed, Poppins } from 'next/font/google'
+import { Geist, Geist_Mono, Bebas_Neue, Asap_Condensed, Poppins, Inter, Roboto } from 'next/font/google'
 import HydrationZustand from '@/templates/hydrationZustand'
 import { Providers } from './providers'
 import { Toaster } from 'sonner'
@@ -33,6 +33,18 @@ const poppins = Poppins({
   subsets: ['latin'],
 })
 
+const inter = Inter({
+  variable: '--font-inter',
+  weight: ['400', '700'],
+  subsets: ['latin'],
+})
+
+const roboto = Roboto({
+  variable: '--font-roboto',
+  weight: ['400', '500', '700'],
+  subsets: ['latin'],
+})
+
 export const metadata: Metadata = {
   title: 'NEXT.js CRUD template with Zustand and NextAuth',
   description:
@@ -47,7 +59,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${bebasNeue.variable} ${asapCondensed.variable} ${poppins.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${bebasNeue.variable} ${asapCondensed.variable} ${poppins.variable} ${inter.variable} ${roboto.variable} antialiased`}
       >
         <Providers>
           <HydrationZustand>{children}</HydrationZustand>

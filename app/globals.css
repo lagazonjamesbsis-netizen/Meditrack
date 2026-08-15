@@ -11,6 +11,14 @@
   --secondary: #e5e7eb;
   --tertiary: #d1d5db;
   --accent: #000000;
+  --brand: #0f588b;
+  --brand-deep: #0b4a77;
+  --ink: #0a2b44;
+  --mist: #f2f7fb;
+  --line: #d8e3ec;
+  --slate: #5d7488;
+  --font-inter: Arial, Helvetica, sans-serif;
+  --font-roboto: Arial, Helvetica, sans-serif;
 }
 
 .dark {
@@ -31,9 +39,17 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-inter: var(--font-inter);
+  --font-roboto: var(--font-roboto);
   --font-bebas: var(--font-bebas-neue);
   --font-asap: var(--font-asap-condensed);
   --font-poppins: var(--font-poppins);
+  --color-brand: var(--brand);
+  --color-brand-deep: var(--brand-deep);
+  --color-ink: var(--ink);
+  --color-mist: var(--mist);
+  --color-line: var(--line);
+  --color-slate: var(--slate);
 }
 
 @keyframes slideIn {
