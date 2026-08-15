@@ -4,7 +4,7 @@
 import { type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useDarkMode } from "@/app/meditrack/DarkModeContext";
+import { useDarkMode } from "@/app/staff/DarkModeContext";
 import AdminTopBar from "@/app/admin/AdminTopBar";
 import { CurrentUserProvider } from "@/app/admin/CurrentUserContext";
 import { AdminDataProvider } from "@/app/admin/AdminDataContext";

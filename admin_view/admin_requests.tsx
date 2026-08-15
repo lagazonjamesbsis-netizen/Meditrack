@@ -2,7 +2,7 @@
 "use client";
 
 import { Eye, Check, X, CheckCheck } from "lucide-react";
-import { useDarkMode } from "@/app/meditrack/DarkModeContext";
+import { useDarkMode } from "@/app/staff/DarkModeContext";
 import { useMemo, useState } from "react";
 import PatientRecordView, { type PatientRecord } from "@/app/admin/PatientRecordView";
 import { useAdminData, type ApprovalRequest } from "@/app/admin/AdminDataContext";

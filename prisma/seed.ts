@@ -1,7 +1,9 @@
 import { PrismaClient } from '@prisma/client'
+import { PrismaNeon } from '@prisma/adapter-neon'
 import bcrypt from 'bcrypt'
 
-const prisma = new PrismaClient()
+const adapter = new PrismaNeon({ connectionString: process.env.DATABASE_URL! })
+const prisma = new PrismaClient({ adapter })
 
 async function main() {
   const defaultEmail = 'admin@domain.com'
@@ -19,7 +21,20 @@ async function main() {
     },
   })
 
+  const staff = await prisma.user.upsert({
+    where: { email: 'staff@domain.com' },
+    update: {},
+    create: {
+      name: 'Staff User',
+      email: 'staff@domain.com',
+      password: passwordHash,
+      role: 'STAFF',
+      activatedAt: new Date(),
+    },
+  })
+
   console.log('✅ Seeded admin user:', admin.email)
+  console.log('✅ Seeded staff user:', staff.email)
 }
 
 main()

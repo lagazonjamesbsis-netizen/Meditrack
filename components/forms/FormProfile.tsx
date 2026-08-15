@@ -7,7 +7,6 @@ import { useSession } from 'next-auth/react'
 import { UserRoundPen } from 'lucide-react'
 import { Trash } from 'lucide-react'
 import { deleteMedia, uploadMedia } from '@/lib/actions/media'
-import { useUnsavedChanges } from '@/store/useUnsavedChanges'
 
 export default function FormProfile({
   m,
@@ -16,10 +15,13 @@ export default function FormProfile({
   m: User
   className?: string
 }) {
+  //
   const { data: session, update } = useSession()
 
+  //
   const formRef = useRef<HTMLFormElement>(null)
 
+  // States
   const [pending, setPending] = useState(false)
   const [me, setMe] = useState<User>(m)
   const [state, handleSubmit, isPending] = useActionState(updateMe, {
@@ -28,46 +30,39 @@ export default function FormProfile({
     errors: null,
   })
 
-  const { setDirty } = useUnsavedChanges()
-
+  //
   useEffect(() => {
     setMe(m)
-  }, [m])
+  }, [])
 
+  //
   useEffect(() => {
     if (state.success) {
       setMe(state.payload)
-      setDirty(false)
       sessionUpdate(state.payload)
     } else {
       setPending(false)
     }
   }, [state])
 
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (useUnsavedChanges.getState().isDirty) {
-        e.preventDefault()
-      }
-    }
-    window.addEventListener('beforeunload', handleBeforeUnload)
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
-  }, [])
-
+  //
   async function sessionUpdate(updatedUser: User) {
+    // NOTE: Important!
+    // Merge updated user data with existing session user data
+    // *** Just pass the user fields that have changed ***
     const newUser = {
       ...session?.user,
       ...updatedUser,
     }
 
+    //
     console.log('Updating session with new user data:', newUser)
     await update(newUser)
+
+    //
   }
 
-  function getFormData() {
-    return new FormData(formRef.current!)
-  }
-
+  // Upload profile photo
   async function handleUploadProfilePhoto(imageFile: File) {
     setPending(true)
 
@@ -79,18 +74,18 @@ export default function FormProfile({
           ...prev,
           image: upload.payload.url,
         }))
-
-        const fd = getFormData()
-        fd.set('image', upload.payload.url)
-
-        const action = await updateMe(
-          { payload: null, message: null, success: false },
-          fd
+        //
+        const update = await updateMe(
+          formRef.current,
+          (() => {
+            const fd = new FormData()
+            fd.append('name', me.name)
+            fd.append('email', me.email)
+            fd.append('image', upload.payload.url)
+            return fd
+          })()
         )
-        if (action.success) {
-          sessionUpdate(action.payload)
-          setDirty(false)
-        }
+        sessionUpdate(update.payload)
       }
     } catch (error) {
       console.log('error: ', error)
@@ -99,31 +94,29 @@ export default function FormProfile({
     }
   }
 
+  // Delete Profile Photo
   async function handleDeleteProfilePhoto() {
     setPending(true)
 
-    try {
-      const fd = getFormData()
-      fd.set('image', me.image || '')
-      fd.set('removeProfile', 'true')
+    // Prepare form data
+    const formData = new FormData()
+    formData.append('name', me.name)
+    formData.append('email', me.email)
+    formData.append('image', me.image)
+    formData.append('removeProfile', 'true')
 
-      const deleted = await deleteMedia(null, fd)
+    try {
+      // Delete the blob first: deleteMedia verifies the URL is still the
+      // user's stored image, so it must run before updateMe nulls it.
+      const deleted = await deleteMedia(formRef.current, formData)
 
       if (deleted.success) {
-        fd.delete('removeProfile')
-        fd.set('image', '')
-        const updated = await updateMe(
-          { payload: null, message: null, success: false },
-          fd
-        )
+        const updated = await updateMe(formRef.current, formData)
         setMe((prev: User) => ({
           ...prev,
           image: null,
         }))
-        if (updated.success) {
-          sessionUpdate(updated.payload)
-          setDirty(false)
-        }
+        sessionUpdate(updated.payload)
       }
     } catch (error) {
       console.error('error: ', error)
@@ -132,22 +125,19 @@ export default function FormProfile({
     }
   }
 
-  function trackDirty() {
-    setDirty(true)
-  }
-
   return (
     <form
       ref={formRef}
       action={handleSubmit}
-      className={`bg-background p-5 md:p-10 mx-auto flex justify-center ${className}`}
+      className={`bg-white p-5 md:p-10 mx-auto flex justify-center ${className}`}
       noValidate
       data-loading={pending || isPending}
-      onChange={trackDirty}
     >
       <div className="flex flex-col gap-5">
+        {/* Profile Picture Editor */}
+
         <div className="p-4 relative flex justify-center text-center">
-          <div className=" w-24 h-24 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden flex justify-center items-center mx-auto">
+          <div className=" w-24 h-24 rounded-full bg-gray-200 overflow-hidden flex justify-center items-center mx-auto">
             <label
               data-loading={pending}
               htmlFor="profile-image-input"
@@ -201,7 +191,9 @@ export default function FormProfile({
           </div>
         </div>
 
+        {/* Profile Information */}
         <div className="profile-information-container mb-10 w-full flex flex-col gap-y-4">
+          {/* Name */}
           <div className="form-control">
             <label htmlFor="name">Name</label>
             <div className="flex relative">
@@ -213,17 +205,19 @@ export default function FormProfile({
                 disabled={isPending}
               />
             </div>
+            {/* Field Alert */}
             {state.errors?.name && (
               <div className="error">{state.errors.name}</div>
             )}
           </div>
+          {/* Email Address */}
           <div className="form-control">
             <label htmlFor="email">Email Address</label>
             <input
               name="email"
               type="email"
               defaultValue={me?.email}
-              className={`!w-full ${state.errors?.email ? 'has-errors' : ''}`}
+              className={`!w-full ${state.errors?.name ? 'has-errors' : ''}`}
             />
           </div>
           {state?.message && (
@@ -235,6 +229,7 @@ export default function FormProfile({
               {state.message}
             </div>
           )}
+          {/* Save Button */}
           <button
             className={`button button--accent flex justify-center my-3 ${
               isPending ? 'cursor-wait opacity-50' : 'cursor-pointer'

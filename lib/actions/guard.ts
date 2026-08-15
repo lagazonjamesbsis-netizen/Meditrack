@@ -3,6 +3,8 @@ import { authOptions } from '@/lib/authOptions'
 
 const ADMIN_ROLES = ['SUPERADMIN', 'ADMIN']
 
+const STAFF_ROLES = ['STAFF']
+
 // Result returned to the client when a guard denies access. Server actions
 // return this shape instead of throwing so the calling form can render it.
 export const unauthorized = {
@@ -29,6 +31,14 @@ export async function requireAdmin(): Promise<Session | null> {
   const session = await getSession()
   if (!session?.user?.id) return null
   if (!ADMIN_ROLES.includes((session.user.role as string) ?? '')) return null
+  return session
+}
+
+// Guards a server action for staff (STAFF).
+export async function requireStaff(): Promise<Session | null> {
+  const session = await getSession()
+  if (!session?.user?.id) return null
+  if (!STAFF_ROLES.includes((session.user.role as string) ?? '')) return null
   return session
 }
 

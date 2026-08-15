@@ -5,7 +5,7 @@ import { LogOut, Moon, Settings, UserRound, X } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { useDarkMode } from '@/app/meditrack/DarkModeContext'
+import { useDarkMode } from '@/app/staff/DarkModeContext'
 import { useCurrentUser } from '@/app/admin/CurrentUserContext'
 
 interface Notification {
