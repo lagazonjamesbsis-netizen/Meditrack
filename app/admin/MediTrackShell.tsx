@@ -8,14 +8,14 @@ import { useDarkMode, DarkModeProvider } from '@/app/admin/DarkModeContext'
 import { ProfilePhotoProvider, useProfilePhoto } from '@/app/admin/ProfilePhotoContext'
 
 const navItems = [
-  { href: '/admin', label: 'Dashboard', icon: '/icon-home.png' },
-  { href: '/admin/appointmentmanagement', label: 'Analytics', icon: '/icon-calendar.png' },
-  { href: '/admin/usermanagement', label: 'User Management', icon: '/icon-events.png' },
-  { href: '/admin/services', label: 'Patient Lists', icon: '/icon-services.png' },
-  { href: '/admin/approvalrequest', label: 'Approval Request', icon: '/icon-patients.png' },
-  { href: '/admin/events', label: 'Events and Services', icon: '/icon-events.png' },
-  { href: '/admin/appointmentschedule', label: 'Appointment Schedule', icon: '/icon-calendar.png' },
-  { href: '/admin/patientrecord', label: 'Queueing', icon: '/icon-patients.png' },
+  { href: '/admin', label: 'Dashboard', icon: '/dashboard.png', exact: true },
+  { href: '/admin/appointmentmanagement', label: 'Analytics', icon: '/analytics.png' },
+  { href: '/admin/usermanagement', label: 'User Management', icon: '/user-management.png' },
+  { href: '/admin/services', label: 'Patient Lists', icon: '/medical-record.png' },
+  { href: '/admin/approvalrequest', label: 'Approval Request', icon: '/approval-request.png' },
+  { href: '/admin/events', label: 'Events and Services', icon: '/care.png' },
+  { href: '/admin/appointmentschedule', label: 'Appointment Schedule', icon: '/calendar.png' },
+  { href: '/admin/patientrecord', label: 'Queueing', icon: '/queue.png' },
 ]
 
 const notificationCategories = [
@@ -143,8 +143,8 @@ function SidebarContent({ darkMode, onNavigate }: { darkMode: boolean; onNavigat
           <ul className="list-none p-0 m-0 flex flex-col gap-1">
             {navItems.map((item) => {
               const isActive =
-                item.href === '/'
-                  ? pathname === '/'
+                item.exact
+                  ? pathname === item.href
                   : pathname === item.href || pathname.startsWith(item.href + '/')
               return (
                 <li key={item.label} className={`rounded-[12px] transition-colors duration-300 ${isActive ? (darkMode ? 'bg-[#2d1b4e]' : 'bg-[#ddd6fe]') : (darkMode ? 'hover:bg-[#050617]/50' : 'hover:bg-[#E8E8E8]/50')}`}>
