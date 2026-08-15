@@ -27,11 +27,6 @@ export async function proxy(req: NextRequest) {
     }
   }
 
-  // Signed-in users skip the login page.
-  if (pathname.startsWith('/login') && token) {
-    return NextResponse.redirect(new URL('/dashboard', req.url))
-  }
-
   return NextResponse.next()
 }
 

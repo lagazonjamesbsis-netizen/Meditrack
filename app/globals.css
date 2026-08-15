@@ -135,7 +135,7 @@
     }
     select,
     input[type='date'] {
-      @apply appearance-none bg-white;
+      @apply appearance-none bg-white dark:bg-card dark:text-body;
     }
     textarea {
       @apply field-sizing-content;

@@ -2,7 +2,7 @@ import { CalendarDays, Check, Clock, X } from 'lucide-react'
 
 export default function AppointmentCard({ className = '' }: { className?: string }) {
   return (
-    <div className={`border border-line rounded-2xl p-4 bg-card ${className}`}>
+    <div className={`bg-card rounded-3xl shadow-card p-5 ${className}`}>
       <div className="flex gap-3 items-center">
         <div
           aria-hidden="true"
@@ -16,12 +16,12 @@ export default function AppointmentCard({ className = '' }: { className?: string
         </div>
       </div>
 
-      <div className="mt-4 text-sm text-muted grid grid-cols-2 gap-2.5">
+      <div className="mt-4 text-sm text-muted flex flex-col gap-2">
         <p className="inline-flex items-center gap-1.5 min-w-0">
           <CalendarDays className="w-4 h-4 text-brand shrink-0" />
           March 30, 2026
         </p>
-        <p className="inline-flex items-center gap-1.5">
+        <p className="inline-flex items-center gap-1.5 min-w-0">
           <Clock className="w-4 h-4 text-brand shrink-0" />
           2:00 PM - 3:00 PM
         </p>
