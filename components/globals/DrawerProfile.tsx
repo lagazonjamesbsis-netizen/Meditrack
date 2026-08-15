@@ -15,7 +15,7 @@ import {
 } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import { useUnsavedChanges } from '@/store/useUnsavedChanges'
-import { useDarkMode } from '@/app/staff/DarkModeContext'
+import { useDarkMode } from '@/components/globals/DarkModeContext'
 
 export default function DrawerProfile() {
   const router = useRouter()

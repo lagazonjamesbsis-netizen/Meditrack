@@ -1,7 +1,10 @@
-"use client";
+import type { Metadata } from 'next'
+import Homepage from '@/app/admin/Homepage'
 
-import AdminDashboard from "../../admin_view/admin_dashboard";
+export const metadata: Metadata = {
+  title: 'Dashboard | Meditrack',
+}
 
-export default function AdminPage() {
-  return <AdminDashboard />;
+export default function AdminHome() {
+  return <Homepage />
 }

@@ -1,14 +1,71 @@
-export default function UserDashboard() {
+import { Metadata } from 'next'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/authOptions'
+import { redirect } from 'next/navigation'
+import { getAccountAccess } from '@/lib/actions/guard'
+import PatientHeader from '@/components/patient/Header'
+import WelcomeCard from '@/components/patient/WelcomeCard'
+import AppointmentCard from '@/components/patient/AppointmentCard'
+import EventCard from '@/components/patient/EventCard'
+import ServicesSection from '@/components/patient/ServicesSection'
+import StaffList from '@/components/patient/StaffList'
+import ApprovalBanner from '@/components/patient/ApprovalBanner'
+import AccountStatusScreen from '@/components/patient/AccountStatusScreen'
+import PatientBottomNavigation from '@/components/patient/PatientBottomNavigation'
+import PatientSidebar from '@/components/patient/PatientSidebar'
+
+export const metadata: Metadata = {
+  title: 'Dashboard',
+  description: 'MediTrack patient dashboard',
+}
+
+export default async function Dashboard() {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.id) redirect('/login')
+
+  // Account approval gate: PENDING users see their status + allowed features;
+  // REJECTED users see the verification-failed screen.
+  const access = await getAccountAccess()
+  if (!access) redirect('/login')
+
+  const isRejected = access.status === 'REJECTED'
+
   return (
-    <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
-      <span className="font-poppins text-xs font-bold text-[#4E69D3] uppercase tracking-[3px] mb-4">
-        Coming soon
-      </span>
-      <h2 className="font-bebas text-5xl text-[#0F588B] m-0">MEDITRACK</h2>
-      <p className="font-poppins text-base text-gray-500 mt-3 max-w-md">
-        Your personal health dashboard is on the way. Soon you&apos;ll be able
-        to book appointments, view health records, and more right here.
-      </p>
-    </div>
+    <>
+      <section
+        className="min-h-dvh bg-cover bg-center bg-no-repeat lg:ml-64"
+        style={{ backgroundImage: "url('/purplebackground.png')" }}
+      >
+        <div className="max-w-md mx-auto pb-32 md:max-w-3xl lg:max-w-5xl xl:max-w-6xl">
+          <PatientHeader />
+
+          <main className="px-4 pt-4 flex flex-col gap-5">
+            {isRejected ? (
+              <AccountStatusScreen status={access.status} showSignOut />
+            ) : (
+              <div className="flex flex-col gap-5 md:grid md:grid-cols-2 md:items-start">
+                <div className="flex flex-col gap-5 min-w-0">
+                  {!access.approved && <ApprovalBanner />}
+                  <WelcomeCard name={session.user.name ?? 'there'} />
+                  {access.approved && <AppointmentCard />}
+                  <StaffList />
+                </div>
+                <div className="flex flex-col gap-5 min-w-0">
+                  {access.approved && <ServicesSection />}
+                  <EventCard />
+                </div>
+              </div>
+            )}
+          </main>
+        </div>
+      </section>
+
+      {!isRejected && (
+        <>
+          <PatientSidebar />
+          <PatientBottomNavigation />
+        </>
+      )}
+    </>
   )
 }
