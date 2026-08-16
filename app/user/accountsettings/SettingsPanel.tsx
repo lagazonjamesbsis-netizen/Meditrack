@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { useSession, signOut } from 'next-auth/react'
 import { updateMe, updateMePassword } from '@/lib/actions/me'
 import { useDarkMode } from '@/components/globals/DarkModeContext'
+import FontSizeSetting from '@/components/globals/FontSizeSetting'
 import { ChevronLeft } from 'lucide-react'
 
 type SettingsUser = {
@@ -117,6 +118,7 @@ export default function SettingsPanel({ user }: { user: SettingsUser }) {
         return (
           <>
             <h2 className={`text-[22px] font-bold m-0 mb-4 ${darkMode ? 'text-[#F9FAFB]' : 'text-[#1d4662]'}`}>Display Settings</h2>
+            <FontSizeSetting darkMode={darkMode} />
             <div className={rowClass}>
               <div className="flex flex-col gap-0.5">
                 <span className={`text-[16px] font-semibold ${darkMode ? 'text-[#F9FAFB]' : 'text-[#2A2E43]'}`}>Compact View</span>

@@ -4,7 +4,6 @@ import { authOptions } from '@/lib/authOptions'
 import { redirect } from 'next/navigation'
 import { getAccountAccess } from '@/lib/actions/guard'
 import PatientHeader from '@/components/patient/Header'
-import WelcomeCard from '@/components/patient/WelcomeCard'
 import AppointmentCard from '@/components/patient/AppointmentCard'
 import EventCard from '@/components/patient/EventCard'
 import ServicesSection from '@/components/patient/ServicesSection'
@@ -42,18 +41,22 @@ export default async function Dashboard() {
             {isRejected ? (
               <AccountStatusScreen status={access.status} showSignOut />
             ) : (
-              <div className="flex flex-col gap-5 md:grid md:grid-cols-2 md:items-start">
-                <div className="flex flex-col gap-5 min-w-0">
-                  {!access.approved && <ApprovalBanner />}
-                  <WelcomeCard name={session.user.name ?? 'there'} />
-                  {access.approved && <AppointmentCard />}
-                  <StaffList />
+              <>
+                <h1 className="text-[40px] sm:text-[52px] lg:text-[68px] text-[#1d4662] dark:text-[#F9FAFB] my-[14px] text-left">
+                  Hello, {session.user.name ?? 'there'}!
+                </h1>
+                <div className="flex flex-col gap-5 md:grid md:grid-cols-2 md:items-start">
+                  <div className="flex flex-col gap-5 min-w-0">
+                    {!access.approved && <ApprovalBanner />}
+                    {access.approved && <AppointmentCard />}
+                    <StaffList />
+                  </div>
+                  <div className="flex flex-col gap-5 min-w-0">
+                    {access.approved && <ServicesSection />}
+                    <EventCard />
+                  </div>
                 </div>
-                <div className="flex flex-col gap-5 min-w-0">
-                  {access.approved && <ServicesSection />}
-                  <EventCard />
-                </div>
-              </div>
+              </>
             )}
           </main>
         </div>

@@ -2,6 +2,7 @@
 
 import { SessionProvider } from "next-auth/react"
 import { DarkModeProvider } from "@/components/globals/DarkModeContext"
+import { FontSizeProvider } from "@/components/globals/FontSizeContext"
 
 type Props = {
   children?: React.ReactNode
@@ -9,8 +10,10 @@ type Props = {
 
 export const Providers = ({ children }: Props) => {
   return (
-    <DarkModeProvider>
-      <SessionProvider>{children}</SessionProvider>
-    </DarkModeProvider>
+    <FontSizeProvider>
+      <DarkModeProvider>
+        <SessionProvider>{children}</SessionProvider>
+      </DarkModeProvider>
+    </FontSizeProvider>
   )
 }
