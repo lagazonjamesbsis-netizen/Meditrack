@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { signOut } from 'next-auth/react'
 import { useDarkMode, DarkModeProvider } from '@/app/staff/DarkModeContext'
 import { ProfilePhotoProvider, useProfilePhoto } from '@/app/staff/ProfilePhotoContext'
+import SidebarFooter from '@/components/globals/SidebarFooter'
 import { addDays } from '@/src/lib/dateUtils'
 
 const navItems = [
@@ -133,14 +134,7 @@ function SidebarContent({ darkMode, onNavigate }: { darkMode: boolean; onNavigat
           </ul>
         </nav>
 
-        <div className={`border-t pt-3 mt-auto ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-          <div className="flex items-center justify-center gap-1.5">
-            <span className="text-gray-400 text-base font-medium">&copy;</span>
-            <p className={`font-poppins text-[15px] text-center ${darkMode ? 'text-gray-400' : 'text-gray-400'}`}>
-              Meditrack Developers
-            </p>
-          </div>
-        </div>
+        <SidebarFooter darkMode={darkMode} />
   </>
   )
 }

@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { UserRound } from 'lucide-react'
 import MediTrackBrand from '@/components/globals/MediTrackBrand'
+import SidebarFooter from '@/components/globals/SidebarFooter'
+import { useDarkMode } from '@/components/globals/DarkModeContext'
 
 // Permanent left navigation for desktop (1024px+). Mirrors the mobile bottom
 // navigation items, routes, and icons. Hidden below `lg` — mobile/tablet keep
@@ -22,6 +24,7 @@ const items = [
 
 export default function PatientSidebar() {
   const pathname = usePathname()
+  const { darkMode } = useDarkMode()
 
   return (
     <aside className="hidden lg:flex fixed inset-y-0 left-0 z-40 w-[360px] flex-col bg-card border-r border-line shadow-[10px_0_30px_rgb(15_88_139/0.1)] dark:shadow-[10px_0_30px_rgb(0_0_0/0.4)]">
@@ -66,6 +69,8 @@ export default function PatientSidebar() {
           )
         })}
       </nav>
+
+      <SidebarFooter darkMode={darkMode} className="pb-6" />
     </aside>
   )
 }
