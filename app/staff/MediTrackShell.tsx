@@ -9,7 +9,7 @@ import { ProfilePhotoProvider, useProfilePhoto } from '@/app/staff/ProfilePhotoC
 import { addDays } from '@/src/lib/dateUtils'
 
 const navItems = [
-  { href: '/staff', label: 'Homepage', icon: '/icon-home.png' },
+  { href: '/staff', label: 'Homepage', icon: '/icon-home.png', exact: true },
   { href: '/staff/appointmentmanagement', label: 'Appointment Management', icon: '/icon-calendar.png' },
   { href: '/staff/events', label: 'Events', icon: '/icon-events.png' },
   { href: '/staff/services', label: 'Services', icon: '/icon-services.png' },
@@ -112,8 +112,8 @@ function SidebarContent({ darkMode, onNavigate }: { darkMode: boolean; onNavigat
           <ul className="list-none p-0 m-0 flex flex-col gap-1">
             {navItems.map((item) => {
               const isActive =
-                item.href === '/'
-                  ? pathname === '/'
+                item.exact
+                  ? pathname === item.href
                   : pathname === item.href || pathname.startsWith(item.href + '/')
               return (
                 <li key={item.href} className={`rounded-[12px] transition-colors duration-300 ${isActive ? (darkMode ? 'bg-[#2d1b4e]' : 'bg-[#ddd6fe]') : (darkMode ? 'hover:bg-[#050617]/50' : 'hover:bg-[#E8E8E8]/50')}`}>
