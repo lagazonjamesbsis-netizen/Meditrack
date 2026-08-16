@@ -106,6 +106,16 @@ html[data-font-size='large'] {
   --shadow-card: 0 12px 32px -12px rgb(15 88 139 / 0.18);
 }
 
+@keyframes ecg-pulse {
+  0%,
+  100% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 @keyframes slideIn {
   from {
     opacity: 0;
