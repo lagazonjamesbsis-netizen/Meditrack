@@ -45,9 +45,9 @@ const roboto = Roboto({
 })
 
 export const metadata: Metadata = {
-  title: 'NEXT.js CRUD template with Zustand and NextAuth',
+  title: 'Meditrack',
   description:
-    'A template for building a CRUD application using NEXT.js, Zustand for state management, and NextAuth for authentication.',
+    'Your barangay health tracking platform. Book appointments, manage health records, and stay on track.',
 }
 
 export default function RootLayout({

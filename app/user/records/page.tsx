@@ -26,17 +26,16 @@ export default async function RecordsPage() {
   return (
     <>
       <section
-        className="min-h-dvh bg-cover bg-center bg-no-repeat lg:ml-64"
-        style={{ backgroundImage: "url('/purplebackground.png')" }}
+        className="min-h-dvh bg-cover bg-center bg-no-repeat lg:ml-[360px] bg-[url('/purplebackground.png')] dark:bg-none dark:bg-[#050617]"
       >
-        <div className="max-w-md mx-auto pb-32 md:max-w-3xl lg:max-w-5xl xl:max-w-6xl">
-          <PatientHeader />
+        <PatientHeader />
 
-          <main className="px-4 pt-4 flex flex-col gap-5">
+        <div className="max-w-md mx-auto pb-32 md:max-w-3xl lg:max-w-5xl xl:max-w-6xl">
+          <main className="px-4 pt-4 flex flex-col gap-5 lg:px-12 lg:pt-5">
             {allowed ? (
               <>
-                <div className="bg-white rounded-3xl shadow-card p-5">
-                  <p className="text-xs font-bold text-slate-400 tracking-widest">PTN-2610201</p>
+                <div className="bg-white dark:bg-card rounded-3xl shadow-card p-5">
+                  <p className="text-xs font-bold text-slate-400 dark:text-slate-500 tracking-widest">PTN-2610201</p>
                   <h1 className="text-3xl font-bold text-brand mt-1">Your Medical Records</h1>
                 </div>
 

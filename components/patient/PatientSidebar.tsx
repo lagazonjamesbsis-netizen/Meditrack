@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { UserRound } from 'lucide-react'
 import MediTrackBrand from '@/components/globals/MediTrackBrand'
+import SidebarFooter from '@/components/globals/SidebarFooter'
+import { useDarkMode } from '@/components/globals/DarkModeContext'
 
 // Permanent left navigation for desktop (1024px+). Mirrors the mobile bottom
 // navigation items, routes, and icons. Hidden below `lg` — mobile/tablet keep
@@ -22,16 +24,17 @@ const items = [
 
 export default function PatientSidebar() {
   const pathname = usePathname()
+  const { darkMode } = useDarkMode()
 
   return (
-    <aside className="hidden lg:flex fixed inset-y-0 left-0 z-40 w-64 flex-col bg-card border-r border-line shadow-[10px_0_30px_rgb(15_88_139/0.1)] dark:shadow-[10px_0_30px_rgb(0_0_0/0.4)]">
+    <aside className="hidden lg:flex fixed inset-y-0 left-0 z-40 w-[360px] flex-col bg-card border-r border-line shadow-[10px_0_30px_rgb(15_88_139/0.1)] dark:shadow-[10px_0_30px_rgb(0_0_0/0.4)]">
       <div className="px-5 pt-8 pb-6 border-b border-line bg-gradient-to-b from-surface/60 to-transparent">
-        <div className="scale-[1.12]">
+        <div className="scale-[1.2]">
           <MediTrackBrand compact />
         </div>
       </div>
 
-      <nav aria-label="Primary" className="flex-1 px-3 pb-3 pt-5 space-y-1.5 overflow-y-auto">
+      <nav aria-label="Primary" className="flex-1 px-3 pb-3 pt-3 space-y-1.5 overflow-y-auto">
         {items.map((item) => {
           const isActive =
             item.href === '/user'
@@ -43,9 +46,9 @@ export default function PatientSidebar() {
               key={item.key}
               href={item.href}
               aria-current={isActive ? 'page' : undefined}
-              className={`flex items-center gap-3 px-3.5 py-3 rounded-xl transition-colors ${
+              className={`flex items-center gap-3 px-5 py-4 rounded-xl transition-colors ${
                 isActive
-                  ? 'bg-brand text-white shadow-md font-bold'
+                  ? 'bg-brand-tint text-brand font-bold shadow-sm'
                   : 'text-body hover:bg-brand-tint hover:text-brand'
               }`}
             >
@@ -66,6 +69,8 @@ export default function PatientSidebar() {
           )
         })}
       </nav>
+
+      <SidebarFooter darkMode={darkMode} className="pb-6" />
     </aside>
   )
 }
