@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { toast } from 'sonner'
+import FontSizeSetting from '@/components/globals/FontSizeSetting'
 
 const sections = [
   { id: 'account', label: 'Account Management' },
@@ -93,6 +94,7 @@ export default function Settings({ darkMode, setDarkMode, onLogout }) {
         return (
           <>
             <h2 className={`text-[22px] font-bold m-0 mb-4 ${darkMode ? 'text-[#F9FAFB]' : 'text-[#1d4662]'}`}>Display Settings</h2>
+            <FontSizeSetting darkMode={darkMode} />
             <div className={rowClass}>
               <div className="flex flex-col gap-0.5">
                 <span className={`text-[16px] font-semibold ${darkMode ? 'text-[#F9FAFB]' : 'text-[#2A2E43]'}`}>Compact View</span>

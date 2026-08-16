@@ -4,6 +4,18 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+html[data-font-size='small'] {
+  zoom: 0.9;
+}
+
+html[data-font-size='medium'] {
+  zoom: 1;
+}
+
+html[data-font-size='large'] {
+  zoom: 1.15;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;

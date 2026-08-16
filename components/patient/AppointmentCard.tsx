@@ -3,7 +3,9 @@ import { CalendarDays, Check, Clock, X } from 'lucide-react'
 export default function AppointmentCard({ className = '' }: { className?: string }) {
   return (
     <div className={`bg-card rounded-3xl shadow-card p-5 ${className}`}>
-      <div className="flex gap-3 items-center">
+      <h2 className="text-2xl font-bold text-brand">Upcoming Appointment</h2>
+
+      <div className="flex gap-3 items-center mt-4">
         <div
           aria-hidden="true"
           className="w-12 h-12 rounded-full bg-brand-tint text-brand font-bold flex items-center justify-center"
